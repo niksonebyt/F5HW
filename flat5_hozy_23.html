@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>Flat5 — Хози</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f0f;--sf:#1a1a1a;--sf2:#212121;--bd:#2a2a2a;
+  --ac:#f5c842;--ac-d:rgba(245,200,66,.13);
+  --dan:#ef4444;--dan-d:rgba(239,68,68,.13);
+  --warn:#f97316;--warn-d:rgba(249,115,22,.13);
+  --ok:#22c55e;--ok-d:rgba(34,197,94,.13);
+  --wo:#f43f5e;--wo-d:rgba(244,63,94,.13);
+  --adm:#a855f7;--adm-d:rgba(168,85,247,.13);
+  --tx:#e8e8e8;--sub:#888;--hint:#444;
+}
+body{background:var(--bg);color:var(--tx);font-family:'Inter','Helvetica Neue',Arial,sans-serif;min-height:100vh;padding-bottom:90px;font-size:14px}
+button{cursor:pointer;font-family:inherit}
+input,select,textarea{font-family:inherit}
+#ns{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:300;padding:24px}
+.ns-box{background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:32px 24px;width:100%;max-width:360px;text-align:center}
+#hdr{background:var(--sf);border-bottom:1px solid var(--bd);padding:11px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+.hdr-r{display:flex;align-items:center;gap:7px}
+.u-chip{background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:4px 10px;font-size:12px;color:var(--sub);cursor:pointer;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ibtn{border-radius:50%;width:30px;height:30px;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;border:1px solid var(--bd)}
+.nb{background:var(--dan-d);border:1px solid var(--dan);border-radius:8px;padding:4px 10px;font-size:12px;color:var(--dan);font-weight:700;cursor:pointer;display:none}
+#sync-ind{font-size:10px;display:none;align-items:center}
+#tabs{display:flex;border-bottom:1px solid var(--bd);background:var(--sf);position:sticky;top:53px;z-index:19;overflow-x:auto}
+#tabs button{flex:1;min-width:55px;padding:10px 3px;font-size:10px;color:var(--sub);background:none;border:none;border-bottom:2px solid transparent;font-weight:400;white-space:nowrap}
+#tabs button.on{color:var(--ac);border-bottom-color:var(--ac);font-weight:700}
+.pills{display:flex;gap:5px;flex-wrap:wrap;padding-bottom:11px}
+.pill{background:var(--sf);color:var(--sub);border:1px solid var(--bd);border-radius:20px;padding:5px 11px;font-size:11px;cursor:pointer;white-space:nowrap}
+.pill.on{background:var(--ac);color:#0f0f0f;border-color:var(--ac);font-weight:700}
+.sec-t{font-size:13px;font-weight:800;margin:4px 0 9px;display:flex;align-items:center;gap:5px}
+.cat-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.cat-l{font-size:10px;color:var(--ac);font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.ic{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.ic.low{border-color:var(--warn)}.ic.empty{border-color:var(--dan)}.ic.over-norm{border-color:var(--wo)}
+.ii{flex:1;min-width:0}
+.iname{font-size:13px;font-weight:600;margin-bottom:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.imeta{font-size:10px;color:var(--sub)}
+.nbadge{font-size:10px;border-radius:4px;padding:1px 5px;font-weight:600;margin-top:2px;display:inline-block}
+.nbadge.ok{background:var(--ok-d);color:var(--ok)}.nbadge.warn{background:var(--warn-d);color:var(--warn)}.nbadge.over{background:var(--wo-d);color:var(--wo)}
+.ctrl{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.bsm{background:rgba(255,255,255,.07);border:1px solid var(--bd);border-radius:6px;width:28px;height:28px;color:var(--tx);font-size:16px;display:flex;align-items:center;justify-content:center;padding:0}
+.qval{font-size:15px;font-weight:700;min-width:25px;text-align:center}
+.ulbl{font-size:10px;color:var(--sub);min-width:18px}
+.sbadge{border-radius:6px;padding:3px 6px;font-size:10px;font-weight:700;min-width:36px;text-align:center;flex-shrink:0}
+.s-ok{background:var(--ok-d);color:var(--ok)}.s-low{background:var(--warn-d);color:var(--warn)}.s-empty{background:var(--dan-d);color:var(--dan)}
+.wobtn{background:var(--wo-d);border:1px solid var(--wo);border-radius:6px;height:24px;padding:0 7px;font-size:10px;font-weight:700;color:var(--wo);flex-shrink:0}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:flex-end;z-index:100}
+.mb{background:#1c1c1c;border-radius:20px 20px 0 0;padding:18px 16px 48px;width:100%;max-height:92vh;overflow-y:auto}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.mtitle{font-size:16px;font-weight:700}
+.mc{background:none;border:none;color:var(--sub);font-size:22px;padding:0}
+label.lb{font-size:10px;color:var(--sub);display:block;margin-bottom:4px;margin-top:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.ip{background:#111;border:1px solid var(--bd);border-radius:8px;padding:9px 12px;color:var(--tx);font-size:13px;width:100%}
+.ip:focus{outline:2px solid var(--ac);outline-offset:1px}
+textarea.ip{resize:vertical;min-height:58px}
+.bprim{background:var(--ac);border:none;border-radius:10px;padding:12px 18px;color:#0f0f0f;font-weight:700;font-size:14px;width:100%;margin-top:12px}
+.bred{background:var(--wo);border:none;border-radius:10px;padding:12px 18px;color:#fff;font-weight:700;font-size:14px;width:100%;margin-top:12px}
+.bsec{background:#2a2a2a;border:none;border-radius:8px;padding:7px 12px;color:var(--tx);font-weight:600;font-size:12px}
+.ibox{background:var(--wo-d);border:1px solid var(--wo);border-radius:8px;padding:9px 12px;font-size:12px;color:var(--wo);margin-bottom:10px}
+.norm-warn-modal{background:var(--dan-d);border:1px solid var(--dan);border-radius:12px;padding:14px;margin-bottom:12px}
+.ld{font-size:10px;color:var(--hint);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:11px 0 5px}
+.le{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-bottom:5px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.le.wo{border-color:var(--wo)}.le.overlimit{border-color:var(--dan)}
+.lname{font-size:13px;font-weight:600}.lmeta{font-size:11px;color:var(--sub);margin-top:2px}
+.lqty{font-size:13px;font-weight:700;text-align:right;flex-shrink:0}.lwho{font-size:11px;color:var(--sub);text-align:right;margin-top:2px}
+.wotag{font-size:9px;background:var(--wo-d);color:var(--wo);border-radius:3px;padding:1px 4px;margin-left:3px}
+.oltag{font-size:9px;background:var(--dan-d);color:var(--dan);border-radius:3px;padding:1px 4px;margin-left:3px}
+.bc{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:12px}
+.bir{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd)}
+.bir:last-child{border-bottom:none}
+.schip{background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:5px 11px;font-size:12px;color:var(--sub);cursor:pointer;white-space:nowrap}
+.schip.on{background:var(--ac-d);border-color:var(--ac);color:var(--ac);font-weight:700}
+.si-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd)}
+.si-row:last-child{border-bottom:none}
+.set-item{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-bottom:6px}
+.set-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:7px}
+.norm-row{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-top:7px;padding-top:7px;border-top:1px solid var(--bd)}
+.adm-sec{background:var(--adm-d);border:1px solid var(--adm);border-radius:10px;padding:12px;margin-bottom:14px}
+.adm-sec-t{font-size:10px;color:var(--adm);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.stat-card{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:8px}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--bd);font-size:13px}
+.stat-row:last-child{border-bottom:none}
+.empty{text-align:center;padding:40px 16px;color:var(--sub);font-size:13px}
+.divider{height:1px;background:var(--bd);margin:14px 0}
+</style>
+</head>
+<body>
+
+<div id="ns">
+  <div class="ns-box">
+    <div style="font-size:10px;color:var(--ac);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">FLAT5</div>
+    <div style="font-size:22px;font-weight:800;margin-bottom:4px">Хози</div>
+    <div style="font-size:13px;color:var(--sub);margin-bottom:22px">Введіть ваше ім'я</div>
+    <input id="ns-inp" class="ip" placeholder="Ваше ім'я" style="text-align:center;font-size:16px;margin-bottom:12px"/>
+    <button class="bprim" style="margin-top:0" onclick="saveName()">Увійти →</button>
+  </div>
+</div>
+
+<div id="hdr">
+  <div>
+    <div style="font-size:10px;color:var(--ac);font-weight:700;letter-spacing:2px;text-transform:uppercase">FLAT5</div>
+    <div style="font-size:18px;font-weight:700">Хози</div>
+  </div>
+  <div class="hdr-r">
+    <div id="sync-ind"></div>
+    <div class="nb" id="nb" onclick="setTab('buy')"></div>
+    <div id="gear-icon" onclick="openSysSettings()" style="background:var(--sf2);color:var(--sub);display:none" class="ibtn" title="Налаштування">⚙</div>
+    <div id="adm-icon" onclick="setTab('settings')" style="background:var(--adm-d);border-color:var(--adm);color:var(--adm);display:none" class="ibtn">А</div>
+    <div id="adm-login-btn" onclick="openAdmModal()" style="background:var(--sf2);color:var(--hint)" class="ibtn">А</div>
+    <div class="u-chip" id="u-chip" onclick="openNameEdit()">—</div>
+  </div>
+</div>
+
+<div id="tabs">
+  <button onclick="setTab('stock')" class="on" data-tab="stock">📦 Залишки</button>
+  <button onclick="setTab('buy')" data-tab="buy">🛒 Купити</button>
+  <button onclick="setTab('supply')" data-tab="supply">🚚 Постачання</button>
+  <button onclick="setTab('log')" data-tab="log">📋 Журнал</button>
+  <button id="stats-tab-btn" onclick="openStats()" style="display:none">📊 Статистика</button>
+  <button onclick="setTab('settings')" data-tab="settings">📋 Звіт</button>
+</div>
+
+<div id="main"></div>
+
+<!-- TAKE -->
+<div id="take-ov" class="ov" style="display:none" onclick="if(event.target===this)closeTake()">
+  <div class="mb">
+    <div class="mh"><div class="mtitle" id="take-t">Взяти</div><button class="mc" onclick="closeTake()">✕</button></div>
+    <div id="take-info" style="font-size:12px;color:var(--sub);margin-bottom:6px"></div>
+    <div id="norm-warn-block" class="norm-warn-modal" style="display:none">
+      <div style="font-size:13px;font-weight:700;color:var(--dan);margin-bottom:6px">⚠️ Норма використання</div>
+      <div id="norm-warn-text" style="font-size:12px;color:var(--tx);line-height:1.5"></div>
+    </div>
+    <label class="lb">Ваше ім'я</label><input id="take-name" class="ip" placeholder="Ім'я"/>
+    <label class="lb">Кількість</label><input id="take-qty" class="ip" type="number" min="1" value="1" oninput="onTakeQty()"/>
+    <label class="lb">Коли</label><input id="take-when" class="ip" type="datetime-local"/>
+    <button class="bprim" onclick="confirmTake()">Записати</button>
+  </div>
+</div>
+
+<!-- WRITEOFF -->
+<div id="wo-ov" class="ov" style="display:none" onclick="if(event.target===this)closeWo()">
+  <div class="mb">
+    <div class="mh"><div class="mtitle" id="wo-t">🗑 Списання</div><button class="mc" onclick="closeWo()">✕</button></div>
+    <div id="wo-info" style="font-size:12px;color:var(--sub);margin-bottom:8px"></div>
+    <div class="ibox">Знімається зі складу, але <b>не входить у норму</b> і позначається окремо.</div>
+    <label class="lb">Хто списує</label><input id="wo-name" class="ip" placeholder="Ім'я"/>
+    <label class="lb">Кількість <span id="wo-unit" style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--sub)"></span></label>
+    <input id="wo-qty" class="ip" type="number" min="1" value="1"/>
+    <label class="lb">Причина</label><textarea id="wo-reason" class="ip" placeholder="зіпсувались, розлилось…"></textarea>
+    <label class="lb">Коли</label><input id="wo-when" class="ip" type="datetime-local"/>
+    <button class="bred" onclick="confirmWo()">Списати</button>
+  </div>
+</div>
+
+<!-- SUPPLY -->
+<div id="sup-ov" class="ov" style="display:none" onclick="if(event.target===this)closeSupply()">
+  <div class="mb">
+    <div class="mh"><div class="mtitle">🚚 Нове постачання</div><button class="mc" onclick="closeSupply()">✕</button></div>
+    <label class="lb">Постачальник</label>
+    <div id="sup-chips" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px"></div>
+    <label class="lb">Дата</label><input id="sup-date" class="ip" type="date"/>
+    <label class="lb">Хто приймає</label><input id="sup-who" class="ip" placeholder="Ім'я"/>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;margin-bottom:6px">
+      <div style="font-size:11px;font-weight:700">Товари у постачанні</div>
+      <button class="bprim" style="width:auto;margin-top:0;padding:8px 14px;font-size:13px" onclick="confirmSupply()">Зберегти ✓</button>
+    </div>
+    <div id="sup-lines"></div>
+    <div style="margin-top:10px">
+      <div style="position:relative;margin-bottom:8px">
+        <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--sub)">🔍</span>
+        <input class="ip" id="sup-search" placeholder="Пошук товару…" style="padding-left:32px" oninput="onSupSearch(this.value)"/>
+      </div>
+      <div id="sup-item-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SQTY -->
+<div id="sqty-ov" class="ov" style="display:none;z-index:200" onclick="if(event.target===this)closeSQty()">
+  <div class="mb" style="padding:18px 16px 36px">
+    <div class="mh"><div class="mtitle" id="sqty-t">Кількість</div><button class="mc" onclick="closeSQty()">✕</button></div>
+    <div id="sqty-info" style="font-size:12px;color:var(--sub);margin-bottom:10px"></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input id="sqty-val" class="ip" type="number" min="1" placeholder="0" style="flex:1;font-size:20px;text-align:center;padding:12px"/>
+      <span id="sqty-unit" style="font-size:14px;color:var(--sub);flex-shrink:0;min-width:30px"></span>
+    </div>
+    <button class="bprim" onclick="confirmSQty()">Підтвердити</button>
+  </div>
+</div>
+
+<!-- ADD ITEM -->
+<div id="add-ov" class="ov" style="display:none" onclick="if(event.target===this)closeAdd()">
+  <div class="mb">
+    <div class="mh"><div class="mtitle">Нова позиція</div><button class="mc" onclick="closeAdd()">✕</button></div>
+    <label class="lb">Категорія</label>
+    <select id="new-cat" class="ip">
+      <optgroup label="🍹 Бар">
+        <option value="bar_hozy">🧻 Хози і гігієна</option>
+        <option value="bar_chem">⚗️ Хімія</option>
+        <option value="bar_pack">🧋 Пакування з собою</option>
+      </optgroup>
+      <optgroup label="🍳 Кухня">
+        <option value="kit_cons">🧼 Розхідники</option>
+        <option value="kit_pack">🥊 Пакування з собою</option>
+      </optgroup>
+    </select>
+    <label class="lb">Назва</label><input id="new-name" class="ip" placeholder="Назва"/>
+    <label class="lb">Одиниця</label><input id="new-unit" class="ip" value="уп" placeholder="уп / шт / л"/>
+    <label class="lb">Кількість</label><input id="new-qty" class="ip" type="number" value="0"/>
+    <label class="lb">Мінімальний поріг</label><input id="new-min" class="ip" type="number" value="1"/>
+    <label class="lb">Постачальник</label><select id="new-sup" class="ip"></select>
+    <div style="padding-top:10px;margin-top:10px;border-top:1px solid var(--bd)">
+      <div style="font-size:11px;color:var(--sub);margin-bottom:6px">Норма (необов'язково)</div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+        <span style="font-size:12px;color:var(--sub)">≤</span>
+        <input id="new-nq" class="ip" type="number" placeholder="1" style="width:58px"/>
+        <input id="new-nu" class="ip" placeholder="уп" style="width:50px"/>
+        <span style="font-size:12px;color:var(--sub)">за</span>
+        <input id="new-nd" class="ip" type="number" placeholder="2" style="width:50px"/>
+        <span style="font-size:12px;color:var(--sub)">дні</span>
+      </div>
+    </div>
+    <button class="bprim" onclick="confirmAdd()">Додати</button>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div id="adm-ov" class="ov" style="display:none" onclick="if(event.target===this)closeAdmModal()">
+  <div class="mb">
+    <div class="mh"><div class="mtitle">👑 Адмін-доступ</div><button class="mc" onclick="closeAdmModal()">✕</button></div>
+    <label class="lb">Пароль</label>
+    <input id="adm-pw" class="ip" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')checkPw()"/>
+    <div id="adm-err" style="font-size:12px;color:var(--dan);margin-top:5px;display:none">Невірний пароль</div>
+    <button class="bprim" onclick="checkPw()">Увійти</button>
+  </div>
+</div>
+
+<!-- NAME EDIT -->
+<div id="ne-ov" class="ov" style="display:none" onclick="if(event.target===this)closeNameEdit()">
+  <div class="mb">
+    <div class="mh"><div class="mtitle">Ваше ім'я</div><button class="mc" onclick="closeNameEdit()">✕</button></div>
+    <input id="ne-inp" class="ip" placeholder="Ім'я"/>
+    <button class="bprim" onclick="confirmNameEdit()">Зберегти</button>
+  </div>
+</div>
+
+<!-- STATS -->
+<div id="stats-ov" class="ov" style="display:none" onclick="if(event.target===this)closeStats()">
+  <div class="mb" style="max-height:94vh">
+    <div class="mh"><div class="mtitle">📊 Статистика</div><button class="mc" onclick="closeStats()">✕</button></div>
+    <div class="pills" id="stat-pills"></div>
+    <div id="stat-custom" style="display:none;gap:8px;align-items:center;margin-bottom:12px">
+      <input type="date" class="ip" id="stat-from" style="flex:1" onchange="renderStats()"/>
+      <span style="color:var(--sub);font-size:12px;flex-shrink:0">—</span>
+      <input type="date" class="ip" id="stat-to" style="flex:1" onchange="renderStats()"/>
+    </div>
+    <div id="stats-content"></div>
+  </div>
+</div>
+
+<!-- SYSTEM SETTINGS -->
+<div id="sys-ov" class="ov" style="display:none" onclick="if(event.target===this)closeSysSettings()">
+  <div class="mb">
+    <div class="mh"><div class="mtitle">⚙ Налаштування</div><button class="mc" onclick="closeSysSettings()">✕</button></div>
+
+    <!-- SUPABASE -->
+    <div style="font-size:10px;color:var(--ac);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Supabase — база даних</div>
+    <div id="sb-status-row" style="display:flex;align-items:center;justify-content:space-between;background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;margin-bottom:6px">
+      <div>
+        <div style="font-size:12px;font-weight:600" id="sb-status-label">Перевірка…</div>
+        <div style="font-size:10px;color:var(--sub);margin-top:2px" id="sb-status-url"></div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button onclick="testSb()" style="background:#2a2a2a;border:none;border-radius:6px;padding:5px 10px;color:var(--tx);font-size:11px;cursor:pointer">Тест</button>
+        <button onclick="toggleEdit('sb')" style="background:none;border:none;font-size:16px;cursor:pointer;padding:2px 6px">✏️</button>
+      </div>
+    </div>
+    <div id="sb-edit" style="display:none">
+      <input id="sys-sb-url" class="ip" placeholder="https://xxxx.supabase.co" style="font-size:11px;margin-bottom:6px"/>
+      <input id="sys-sb-key" class="ip" placeholder="sb_publishable_…" style="font-size:11px"/>
+      <button onclick="saveSb()" style="background:var(--ac);border:none;border-radius:8px;padding:8px 14px;color:#0f0f0f;font-weight:700;font-size:12px;margin-top:7px">Зберегти</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- TELEGRAM -->
+    <div style="font-size:10px;color:var(--ac);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Telegram бот</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;margin-bottom:6px">
+      <div>
+        <div style="font-size:12px;font-weight:600" id="tg-status-label">Підключено ✓</div>
+        <div style="font-size:10px;color:var(--sub);margin-top:2px">chat_id: 829174528</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button onclick="testTg()" style="background:#2a2a2a;border:none;border-radius:6px;padding:5px 10px;color:var(--tx);font-size:11px;cursor:pointer">Тест</button>
+        <button onclick="toggleEdit('tg')" style="background:none;border:none;font-size:16px;cursor:pointer;padding:2px 6px">✏️</button>
+      </div>
+    </div>
+    <div id="tg-edit" style="display:none">
+      <input id="sys-tg" class="ip" placeholder="https://api.telegram.org/bot…" style="font-size:11px"/>
+      <button onclick="saveTg()" style="background:var(--ac);border:none;border-radius:8px;padding:8px 14px;color:#0f0f0f;font-weight:700;font-size:12px;margin-top:7px">Зберегти</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- GOOGLE SHEETS -->
+    <div style="font-size:10px;color:var(--ac);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Google Sheets — звіти</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;margin-bottom:6px">
+      <div>
+        <div style="font-size:12px;font-weight:600" id="gs-status-label">Підключено ✓</div>
+        <div style="font-size:10px;color:var(--sub);margin-top:2px">Apps Script</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button onclick="testGs()" style="background:#2a2a2a;border:none;border-radius:6px;padding:5px 10px;color:var(--tx);font-size:11px;cursor:pointer">Тест</button>
+        <button onclick="toggleEdit('gs')" style="background:none;border:none;font-size:16px;cursor:pointer;padding:2px 6px">✏️</button>
+      </div>
+    </div>
+    <div id="gs-edit" style="display:none">
+      <input id="sys-gs" class="ip" placeholder="https://script.google.com/…/exec" style="font-size:11px"/>
+      <button onclick="saveGs()" style="background:var(--ac);border:none;border-radius:8px;padding:8px 14px;color:#0f0f0f;font-weight:700;font-size:12px;margin-top:7px">Зберегти</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- PASSWORD -->
+    <div style="font-size:10px;color:var(--ac);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Пароль адміна</div>
+    <div style="font-size:11px;color:var(--sub);margin-bottom:6px">Мін. 8 символів, велика літера, цифра, спецсимвол</div>
+    <input id="sys-pw-cur" class="ip" type="password" placeholder="Поточний пароль"/>
+    <input id="sys-pw-new" class="ip" type="password" placeholder="Новий пароль" style="margin-top:6px"/>
+    <input id="sys-pw-rep" class="ip" type="password" placeholder="Повторіть" style="margin-top:6px"/>
+    <div id="sys-pw-err" style="font-size:12px;color:var(--dan);margin-top:5px;display:none"></div>
+    <div id="sys-pw-ok" style="font-size:12px;color:var(--ok);margin-top:5px;display:none">✓ Пароль змінено</div>
+    <button onclick="changePw()" style="background:var(--ac);border:none;border-radius:8px;padding:9px 16px;color:#0f0f0f;font-weight:700;font-size:13px;margin-top:8px">Змінити пароль</button>
+
+    <div class="divider"></div>
+    <button onclick="logoutAdm()" style="background:none;border:1px solid var(--bd);border-radius:8px;padding:9px 16px;color:var(--sub);font-size:13px;width:100%">Вийти з адміна</button>
+  </div>
+</div>
+
+<!-- REPORT CONFIRM -->
+<div id="rep-ov" class="ov" style="display:none" onclick="if(event.target===this)closeRep()">
+  <div class="mb" style="text-align:center;padding:28px 18px 44px">
+    <div style="font-size:40px;margin-bottom:10px">✅</div>
+    <div style="font-size:17px;font-weight:700;margin-bottom:12px">Звіт зроблено!</div>
+    <div id="rep-text" style="font-size:13px;color:var(--sub);line-height:1.6;text-align:left;background:var(--sf);border-radius:10px;padding:12px;margin-bottom:18px"></div>
+    <button class="bprim" style="margin-top:0" onclick="closeRep()">Закрити</button>
+  </div>
+</div>
+
+<!-- LOG EDIT MODAL -->
+<div id="log-edit-ov" class="ov" style="display:none" onclick="if(event.target===this)closeLogEdit()">
+  <div class="mb">
+    <div class="mh"><div class="mtitle">✏️ Редагувати запис</div><button class="mc" onclick="closeLogEdit()">✕</button></div>
+    <label class="lb">Товар</label>
+    <input id="le-item" class="ip" readonly style="color:var(--sub)"/>
+    <label class="lb">Хто взяв</label>
+    <input id="le-name" class="ip" placeholder="Ім'я"/>
+    <label class="lb">Кількість</label>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input id="le-qty" class="ip" type="number" min="1" style="flex:1"/>
+      <span id="le-unit" style="font-size:13px;color:var(--sub);flex-shrink:0;min-width:30px"></span>
+    </div>
+    <label class="lb">Коли</label>
+    <input id="le-when" class="ip" type="datetime-local"/>
+    <label class="lb" id="le-reason-lbl">Причина</label>
+    <textarea id="le-reason" class="ip" placeholder="причина…" style="display:none"></textarea>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="bprim" style="margin-top:0;flex:1" onclick="confirmLogEdit()">Зберегти</button>
+      <button onclick="deleteLogEntry()" style="background:var(--dan-d);border:1px solid var(--dan);border-radius:10px;padding:12px 16px;color:var(--dan);font-weight:700;font-size:13px;flex-shrink:0">Видалити</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPLY EDIT MODAL -->
+<div id="sup-edit-ov" class="ov" style="display:none" onclick="if(event.target===this)closeSupEdit()">
+  <div class="mb">
+    <div class="mh"><div class="mtitle">✏️ Редагувати постачання</div><button class="mc" onclick="closeSupEdit()">✕</button></div>
+    <label class="lb">Постачальник</label>
+    <select id="se-supplier" class="ip"></select>
+    <label class="lb">Дата</label>
+    <input id="se-date" class="ip" type="date"/>
+    <label class="lb">Хто прийняв</label>
+    <input id="se-who" class="ip" placeholder="Ім'я"/>
+    <label class="lb" style="margin-top:14px">Товари</label>
+    <div id="se-lines"></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="bprim" style="margin-top:0;flex:1" onclick="confirmSupEdit()">Зберегти</button>
+      <button onclick="deleteSupply()" style="background:var(--dan-d);border:1px solid var(--dan);border-radius:10px;padding:12px 16px;color:var(--dan);font-weight:700;font-size:13px;flex-shrink:0">Видалити</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════ DATA ═══════════════════
+const GROUPS=[{id:"bar",label:"Бар",emoji:"🍹"},{id:"kitchen",label:"Кухня",emoji:"🍳"}];
+const CATS=[
+  {id:"bar_hozy",group:"bar",label:"Хози і гігієна",emoji:"🧻",logT:true},
+  {id:"bar_chem",group:"bar",label:"Хімія",emoji:"⚗️",logT:true},
+  {id:"bar_pack",group:"bar",label:"Пакування з собою",emoji:"🧋",logT:false},
+  {id:"kit_cons",group:"kitchen",label:"Розхідники",emoji:"🧼",logT:true},
+  {id:"kit_pack",group:"kitchen",label:"Пакування з собою",emoji:"🥊",logT:false},
+];
+const DEF_SUPS=["Метро","Ашан","Шувар","Доставка","Інше"];
+const DEF_ITEMS=[
+  {id:"bh01",category:"bar_hozy",name:"Губки",unit:"уп",qty:4,minQty:2,supplier:"Ашан",norm:null},
+  {id:"bh02",category:"bar_hozy",name:"Серветки віскозні",unit:"уп",qty:4,minQty:2,supplier:"Метро",norm:{qty:1,unit:"уп",days:3}},
+  {id:"bh03",category:"bar_hozy",name:"Серветки целюлозні",unit:"вел.уп",qty:1,minQty:1,supplier:"Метро",norm:null},
+  {id:"bh04",category:"bar_hozy",name:"Серветка мікрофібра",unit:"уп",qty:2,minQty:1,supplier:"Метро",norm:null},
+  {id:"bh05",category:"bar_hozy",name:"Серветки в серветниці",unit:"ящ",qty:1,minQty:1,supplier:"Метро",norm:null},
+  {id:"bh06",category:"bar_hozy",name:"Серветки барні",unit:"уп",qty:2,minQty:1,supplier:"Метро",norm:null},
+  {id:"bh07",category:"bar_hozy",name:"Трубочки великі",unit:"уп",qty:3,minQty:2,supplier:"Метро",norm:null},
+  {id:"bh08",category:"bar_hozy",name:"Трубочки малі",unit:"уп",qty:4,minQty:2,supplier:"Метро",norm:null},
+  {id:"bh09",category:"bar_hozy",name:"Мішалочки",unit:"уп",qty:1,minQty:1,supplier:"Метро",norm:null},
+  {id:"bh10",category:"bar_hozy",name:"Зубочистки",unit:"п",qty:5,minQty:2,supplier:"Ашан",norm:null},
+  {id:"bh11",category:"bar_hozy",name:"Папір для бігунка",unit:"шт",qty:10,minQty:3,supplier:"Інше",norm:null},
+  {id:"bh12",category:"bar_hozy",name:"Папір для терміналу",unit:"шт",qty:10,minQty:3,supplier:"Інше",norm:null},
+  {id:"bh13",category:"bar_hozy",name:"Цукор на бар",unit:"пак",qty:1,minQty:1,supplier:"Метро",norm:null},
+  {id:"bh14",category:"bar_hozy",name:"Туалетний папір",unit:"шт",qty:10,minQty:4,supplier:"Ашан",norm:{qty:2,unit:"шт",days:1}},
+  {id:"bh15",category:"bar_hozy",name:"Зетки бар",unit:"шт",qty:7,minQty:3,supplier:"Метро",norm:null},
+  {id:"bh16",category:"bar_hozy",name:"Насадки на швабру",unit:"шт",qty:1,minQty:1,supplier:"Ашан",norm:null},
+  {id:"bc01",category:"bar_chem",name:"Сміттєві пакети 240л",unit:"п",qty:5,minQty:2,supplier:"Ашан",norm:null},
+  {id:"bc02",category:"bar_chem",name:"Сміттєві пакети 120л",unit:"п",qty:5,minQty:2,supplier:"Ашан",norm:null},
+  {id:"bc03",category:"bar_chem",name:"Сміттєві пакети 60л",unit:"п",qty:6,minQty:3,supplier:"Ашан",norm:null},
+  {id:"bc04",category:"bar_chem",name:"Сміттєві пакети 35л",unit:"п",qty:12,minQty:5,supplier:"Ашан",norm:null},
+  {id:"bc05",category:"bar_chem",name:"Засіб для миття скла",unit:"л",qty:5,minQty:2,supplier:"Метро",norm:null},
+  {id:"bc06",category:"bar_chem",name:"Хімія для машинки",unit:"л",qty:0.1,minQty:0.5,supplier:"Інше",norm:null},
+  {id:"bc07",category:"bar_chem",name:"Хімія для стімерів",unit:"л",qty:0.2,minQty:0.5,supplier:"Інше",norm:null},
+  {id:"bc08",category:"bar_chem",name:"Освіжувач повітря",unit:"шт",qty:1,minQty:1,supplier:"Ашан",norm:null},
+  {id:"bc09",category:"bar_chem",name:"Доместос",unit:"л",qty:1,minQty:1,supplier:"Ашан",norm:null},
+  {id:"bc10",category:"bar_chem",name:"Мило для рук",unit:"л",qty:4.5,minQty:2,supplier:"Метро",norm:null},
+  {id:"bc11",category:"bar_chem",name:"Антисептик",unit:"л",qty:2.5,minQty:2,supplier:"Метро",norm:null},
+  {id:"bp01",category:"bar_pack",name:"Стакани 120 мл",unit:"рук",qty:3,minQty:2,supplier:"Метро",norm:null},
+  {id:"bp02",category:"bar_pack",name:"Стакани 240 мл",unit:"рук",qty:2,minQty:2,supplier:"Метро",norm:null},
+  {id:"bp03",category:"bar_pack",name:"Стакани 350 мл",unit:"рук",qty:2,minQty:2,supplier:"Метро",norm:null},
+  {id:"bp04",category:"bar_pack",name:"Кришки великі (стакани)",unit:"рук",qty:3,minQty:2,supplier:"Метро",norm:null},
+  {id:"bp05",category:"bar_pack",name:"Кришки середні (стакани)",unit:"рук",qty:2,minQty:2,supplier:"Метро",norm:null},
+  {id:"bp06",category:"bar_pack",name:"Стакани холодні напої",unit:"рук",qty:6,minQty:3,supplier:"Метро",norm:null},
+  {id:"bp07",category:"bar_pack",name:"Кришки холодні",unit:"рук",qty:4,minQty:2,supplier:"Метро",norm:null},
+  {id:"bp08",category:"bar_pack",name:"Кришки великі",unit:"рук",qty:1,minQty:1,supplier:"Метро",norm:null},
+  {id:"bp09",category:"bar_pack",name:"Крафтові пакети",unit:"шт",qty:20,minQty:10,supplier:"Метро",norm:null},
+  {id:"bp10",category:"bar_pack",name:"Соуснички з собою",unit:"уп",qty:3,minQty:2,supplier:"Метро",norm:null},
+  {id:"bp11",category:"bar_pack",name:"Пакетики для приборів",unit:"п",qty:2,minQty:1,supplier:"Метро",norm:null},
+  {id:"bp12",category:"bar_pack",name:"Пластикові виделки",unit:"уп",qty:2,minQty:1,supplier:"Ашан",norm:null},
+  {id:"bp13",category:"bar_pack",name:"Пластикові ложки",unit:"уп",qty:7,minQty:2,supplier:"Ашан",norm:null},
+  {id:"bp14",category:"bar_pack",name:"Пластикові ножі великі",unit:"уп",qty:3,minQty:1,supplier:"Ашан",norm:null},
+  {id:"bp15",category:"bar_pack",name:"Пластикові ножі малі",unit:"уп",qty:3,minQty:1,supplier:"Ашан",norm:null},
+  {id:"bp16",category:"bar_pack",name:"Підставки на 2 ст",unit:"шт",qty:101,minQty:30,supplier:"Метро",norm:null},
+  {id:"bp17",category:"bar_pack",name:"Підставки на 4 ст",unit:"шт",qty:89,minQty:30,supplier:"Метро",norm:null},
+  {id:"kc01",category:"kit_cons",name:"Зетки",unit:"шт",qty:97,minQty:30,supplier:"Метро",norm:null},
+  {id:"kc02",category:"kit_cons",name:"Губки",unit:"уп",qty:6,minQty:3,supplier:"Ашан",norm:null},
+  {id:"kc03",category:"kit_cons",name:"Шкребки",unit:"уп",qty:7,minQty:2,supplier:"Метро",norm:null},
+  {id:"kc04",category:"kit_cons",name:"Серветки целюлозні",unit:"уп",qty:1,minQty:1,supplier:"Метро",norm:null},
+  {id:"kc05",category:"kit_cons",name:"Кутки на бургери",unit:"уп",qty:2,minQty:1,supplier:"Метро",norm:null},
+  {id:"kc06",category:"kit_cons",name:"Пакети сміттєві",unit:"шт",qty:3,minQty:10,supplier:"Ашан",norm:null},
+  {id:"kc07",category:"kit_cons",name:"Фасувальні пакетики міні",unit:"уп",qty:3,minQty:2,supplier:"Метро",norm:null},
+  {id:"kc08",category:"kit_cons",name:"Фасувальні пакетики великі",unit:"уп",qty:1,minQty:1,supplier:"Метро",norm:null},
+  {id:"kc09",category:"kit_cons",name:"Миючий засіб",unit:"л",qty:2,minQty:1,supplier:"Ашан",norm:null},
+  {id:"kc10",category:"kit_cons",name:"Засіб для поверхонь",unit:"л",qty:1,minQty:1,supplier:"Ашан",norm:null},
+  {id:"kc11",category:"kit_cons",name:"Сіф",unit:"шт",qty:3,minQty:2,supplier:"Ашан",norm:null},
+  {id:"kc12",category:"kit_cons",name:"Пергамент",unit:"рул",qty:2,minQty:1,supplier:"Метро",norm:null},
+  {id:"kc13",category:"kit_cons",name:"Плівка харчова",unit:"рул",qty:1,minQty:1,supplier:"Метро",norm:null},
+  {id:"kc14",category:"kit_cons",name:"Фольга",unit:"рул",qty:1,minQty:1,supplier:"Ашан",norm:null},
+  {id:"kc15",category:"kit_cons",name:"Рукавички S",unit:"уп",qty:0,minQty:2,supplier:"Метро",norm:null},
+  {id:"kc16",category:"kit_cons",name:"Рукавички M",unit:"уп",qty:0,minQty:2,supplier:"Метро",norm:null},
+  {id:"kc17",category:"kit_cons",name:"Рукавички L",unit:"уп",qty:0,minQty:1,supplier:"Метро",norm:null},
+  {id:"kp01",category:"kit_pack",name:"Супники",unit:"шт",qty:84,minQty:30,supplier:"Метро",norm:null},
+  {id:"kp02",category:"kit_pack",name:"Кришки на супники",unit:"шт",qty:100,minQty:50,supplier:"Метро",norm:null},
+  {id:"kp03",category:"kit_pack",name:"Бокси середні",unit:"шт",qty:125,minQty:50,supplier:"Метро",norm:null},
+  {id:"kp04",category:"kit_pack",name:"Кришки середні",unit:"шт",qty:100,minQty:50,supplier:"Метро",norm:null},
+  {id:"kp05",category:"kit_pack",name:"Бокси великі",unit:"шт",qty:46,minQty:80,supplier:"Метро",norm:null},
+  {id:"kp06",category:"kit_pack",name:"Кришки великі",unit:"шт",qty:180,minQty:80,supplier:"Метро",norm:null},
+  {id:"kp07",category:"kit_pack",name:"Соуснички",unit:"шт",qty:150,minQty:60,supplier:"Метро",norm:null},
+];
+
+// ═══════════════════ STATE ═══════════════════
+let items=[],takes=[],supplies=[];
+let myName="",isAdmin=false;
+let tab="stock",gf="all",logSub="bar";
+let statPeriod="7",statFrom="",statTo="";
+let takeId=null,woId=null,sqtyItemId=null;
+let supLines=[],supSup="Метро",supSearchVal="";
+let sups=[...DEF_SUPS],tgWH="",gsURL="",admPwHash="",sbURL="",sbKey="";
+
+// ═══════════════════ LOCALSTORAGE ═══════════════════
+const K={items:"f5_items",takes:"f5_takes",supplies:"f5_supplies",
+  name:"f5_name",admin:"f5_admin",sups:"f5_sups",
+  tg:"f5_tg",gs:"f5_gs",pwHash:"f5_pwHash",sbURL:"f5_sbURL",sbKey:"f5_sbKey"};
+function lg(k,d=null){try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):d}catch{return d}}
+function ls(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
+function saveLocal(){ls(K.items,items);ls(K.takes,takes);ls(K.supplies,supplies)}
+// ═══════════════════ ВШИТІ КОНСТАНТИ ═══════════════════
+const SB_URL_DEFAULT = "https://xssbgknodvkimkmwrcrg.supabase.co";
+const SB_KEY_DEFAULT = "sb_publishable_yeN20Jbw2odnw-0Bw2e5iA_Dwbe35Nk";
+const TG_DEFAULT = "https://api.telegram.org/bot8679471164:AAHaSRyyJCjkSKOaPbTyvlJZ8iUlJioYHEA/sendMessage?chat_id=829174528";
+const GS_DEFAULT = "https://script.google.com/macros/s/AKfycby-oWsd5pn0GKOF6YWGfdTcziFL9ZydmSZac5s9xTi_3mqc6-3nzcMWM1-WUuO0PsnQ/exec";
+// ════════════════════════════════════════════════════════
+
+function loadLocal(){
+  items=lg(K.items)||JSON.parse(JSON.stringify(DEF_ITEMS));
+  takes=lg(K.takes)||[];supplies=lg(K.supplies)||[];
+  myName=lg(K.name)||"";isAdmin=lg(K.admin)||false;
+  sups=lg(K.sups)||[...DEF_SUPS];
+  admPwHash=lg(K.pwHash)||DEFAULT_PW_HASH;
+  // Беремо з localStorage або вшиті дефолти
+  sbURL=lg(K.sbURL)||SB_URL_DEFAULT;
+  sbKey=lg(K.sbKey)||SB_KEY_DEFAULT;
+  tgWH=lg(K.tg)||TG_DEFAULT;
+  gsURL=lg(K.gs)||GS_DEFAULT;
+}
+
+// ═══════════════════ ХЕШУВАННЯ ПАРОЛЮ ═══════════════════
+// Пароль НІКОЛИ не зберігається відкритим текстом — тільки SHA-256 хеш
+// ═══════════════════ ПАРОЛЬ — зберігається в Supabase ═══════════════════
+const DEFAULT_PW_HASH = "f5e1f53ce4838063043d470d79b13750d37a48af38645bf5a4f5683a767c52eb";
+
+async function sha256(str){
+  const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+
+// Завантажуємо хеш з Supabase
+async function loadPwHash(){
+  if(!sbOk()) return DEFAULT_PW_HASH;
+  try{
+    const res=await sbFetch("settings?key=eq.admin_pw_hash&select=value");
+    if(res&&res.length) return res[0].value;
+  }catch{}
+  return DEFAULT_PW_HASH;
+}
+
+// Зберігаємо новий хеш в Supabase
+async function savePwHash(hash){
+  if(!sbOk()) return;
+  await sbFetch("settings?key=eq.admin_pw_hash",{
+    method:"PATCH",
+    body:JSON.stringify({value:hash})
+  });
+}
+
+async function pwMatches(input){
+  const hash=await sha256(input);
+  const stored=await loadPwHash();
+  return hash===stored;
+}
+const sbH=()=>{
+  const h={"Content-Type":"application/json","Prefer":"return=minimal"};
+  if(sbKey.startsWith("sb_publishable_")){
+    // Новий формат Supabase
+    h["Authorization"]="Bearer "+sbKey;
+    h["apikey"]=sbKey;
+  } else {
+    // Старий формат (anon key eyJ...)
+    h["apikey"]=sbKey;
+    h["Authorization"]="Bearer "+sbKey;
+  }
+  return h;
+};
+const sbOk=()=>sbURL&&sbKey;
+
+async function sbFetch(path,opts={}){
+  if(!sbOk())return null;
+  try{
+    const url=sbURL+"/rest/v1/"+path;
+    const headers={...sbH(),...(opts.headers||{})};
+    const r=await fetch(url,{...opts,headers});
+    if(!r.ok){
+      console.error("Supabase error:",r.status,await r.text());
+      return null;
+    }
+    const ct=r.headers.get("content-type")||"";
+    return ct.includes("json")?await r.json():true;
+  }catch(err){
+    console.error("Supabase fetch error:",err);
+    return null;
+  }
+}
+
+async function sbLoad(){
+  if(!sbOk())return;
+  showSync("⟳ Синхронізація…");
+  const [dbItems,dbTakes,dbSup]=await Promise.all([
+    sbFetch("items?select=*&order=sort_order.asc"),
+    sbFetch("takes?select=*&order=created_at.desc&limit=500"),
+    sbFetch("supplies?select=*&order=created_at.desc&limit=200"),
+  ]);
+  if(dbItems&&dbItems.length){
+    items=dbItems.map(r=>({id:r.id,category:r.category,name:r.name,unit:r.unit,
+      qty:Number(r.qty),minQty:Number(r.min_qty),supplier:r.supplier,norm:r.norm||null}));
+    ls(K.items,items);
+  }
+  if(dbTakes){
+    takes=dbTakes.map(r=>({id:r.id,itemId:r.item_id,itemName:r.item_name,
+      category:r.category,unit:r.unit,qty:Number(r.qty),name:r.name,
+      when:r.when_dt,isWo:r.is_wo,overLimit:r.over_limit,reason:r.reason||""}));
+    ls(K.takes,takes);
+  }
+  if(dbSup){
+    supplies=dbSup.map(r=>({id:r.id,date:r.date,supplier:r.supplier,who:r.who,lines:r.lines||[]}));
+    ls(K.supplies,supplies);
+  }
+  showSync("✓","ok");setTimeout(()=>showSync(""),2000);
+}
+
+async function sbUpsertItems(){
+  if(!sbOk())return;
+  // Зберігаємо з sort_order — індекс в масиві
+  const rows=items.map((i,idx)=>({id:i.id,category:i.category,name:i.name,unit:i.unit,
+    qty:i.qty,min_qty:i.minQty,supplier:i.supplier,norm:i.norm,sort_order:idx}));
+  await sbFetch("items",{
+    method:"POST",
+    headers:{"Prefer":"resolution=merge-duplicates"},
+    body:JSON.stringify(rows)
+  });
+}
+
+async function sbInsertTake(t){
+  if(!sbOk())return;
+  await sbFetch("takes",{method:"POST",body:JSON.stringify({
+    id:t.id,item_id:t.itemId,item_name:t.itemName,category:t.category,
+    unit:t.unit,qty:t.qty,name:t.name,when_dt:t.when,
+    is_wo:t.isWo,over_limit:t.overLimit,reason:t.reason||null})});
+}
+
+async function sbInsertSupply(s){
+  if(!sbOk())return;
+  await sbFetch("supplies",{method:"POST",body:JSON.stringify({
+    id:s.id,date:s.date,supplier:s.supplier,who:s.who,lines:s.lines})});
+}
+
+function showSync(msg,type=""){
+  const el=document.getElementById("sync-ind");
+  if(!msg){el.style.display="none";return}
+  el.style.display="flex";
+  el.style.color=type==="ok"?"var(--ok)":type==="err"?"var(--dan)":"var(--sub)";
+  el.textContent=msg;
+}
+
+// ═══════════════════ UTILS ═══════════════════
+function uid(){return Math.random().toString(36).slice(2,9)}
+function nowDT(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16)}
+function stOf(i){if(i.qty===0)return"empty";if(i.qty<=i.minQty)return"low";return"ok"}
+function e(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function cg(id){return CATS.find(c=>c.id===id)?.group||"bar"}
+function takenIn(id,days){
+  // Норма обнуляється о 00:00 — рахуємо від початку поточного дня або N днів назад
+  const now=new Date();
+  let fromMs;
+  if(days===1){
+    // Сьогоднішній день — з 00:00 сьогодні
+    fromMs=new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime();
+  } else {
+    // N днів — з 00:00 N днів тому
+    const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-days+1);
+    fromMs=d.getTime();
+  }
+  return takes.filter(t=>t.itemId===id&&!t.isWo&&
+    new Date((t.when||"").replace(" ","T")).getTime()>=fromMs)
+    .reduce((s,t)=>s+Number(t.qty),0);
+}
+
+function normSt(item){
+  // Не показуємо норму якщо вона не задана або qty=0
+  if(!item.norm)return null;
+  if(!item.norm.qty||item.norm.qty<=0)return null;
+  if(!item.norm.days||item.norm.days<=0)return null;
+  const taken=takenIn(item.id,item.norm.days),r=taken/item.norm.qty;
+  return{level:r>=1?"over":r>=0.7?"warn":"ok",taken,norm:item.norm};
+}
+function lastTake(id){return takes.find(t=>t.itemId===id&&!t.isWo)||null}
+function pill(l,v,a,fn){return`<button class="pill${a?" on":""}" onclick="${fn}('${v}')">${l}</button>`}
+
+// ═══════════════════ NAME ═══════════════════
+function saveName(){
+  const n=document.getElementById("ns-inp").value.trim();if(!n)return;
+  myName=n;ls(K.name,n);
+  document.getElementById("ns").style.display="none";
+  document.getElementById("u-chip").textContent=n;
+  init();
+}
+document.getElementById("ns-inp").addEventListener("keydown",ev=>{if(ev.key==="Enter")saveName()});
+function openNameEdit(){document.getElementById("ne-inp").value=myName;document.getElementById("ne-ov").style.display="flex"}
+function closeNameEdit(){document.getElementById("ne-ov").style.display="none"}
+function confirmNameEdit(){
+  const n=document.getElementById("ne-inp").value.trim();if(!n)return;
+  myName=n;ls(K.name,n);document.getElementById("u-chip").textContent=n;closeNameEdit();
+}
+
+// ═══════════════════ ADMIN ═══════════════════
+function openAdmModal(){
+  document.getElementById("adm-pw").value="";
+  document.getElementById("adm-err").style.display="none";
+  document.getElementById("adm-ov").style.display="flex";
+  setTimeout(()=>document.getElementById("adm-pw").focus(),100);
+}
+function closeAdmModal(){document.getElementById("adm-ov").style.display="none"}
+async function checkPw(){
+  const input=document.getElementById("adm-pw").value;
+  const matches=await pwMatches(input);
+  if(matches){
+    isAdmin=true;ls(K.admin,true);closeAdmModal();
+    document.getElementById("adm-icon").style.display="flex";
+    document.getElementById("adm-login-btn").style.display="none";
+    document.getElementById("stats-tab-btn").style.display="";
+    document.getElementById("gear-icon").style.display="flex";
+    render();
+  } else document.getElementById("adm-err").style.display="";
+}
+function logoutAdm(){
+  isAdmin=false;ls(K.admin,false);
+  document.getElementById("adm-icon").style.display="none";
+  document.getElementById("adm-login-btn").style.display="flex";
+  document.getElementById("stats-tab-btn").style.display="none";
+  document.getElementById("gear-icon").style.display="none";
+  closeSysSettings();render();
+}
+
+// ═══════════════════ TABS ═══════════════════
+function setTab(t){
+  tab=t;
+  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
+  const sb=document.querySelector("#tabs button[data-tab='settings']");
+  if(sb)sb.textContent=isAdmin?"⚙ Адмін":"📋 Звіт";
+  render();
+}
+function setGF(g){gf=g;render()}
+function setLogSub(v){logSub=v;render()}
+
+// ═══════════════════ RENDER ═══════════════════
+function render(){
+  const nb=document.getElementById("nb");
+  const n=items.filter(i=>stOf(i)!=="ok").length;
+  if(n){nb.style.display="";nb.textContent="⚠ "+n;}else nb.style.display="none";
+  const tBtn=document.querySelector("#tabs button[data-tab='settings']");
+  if(tBtn)tBtn.textContent=isAdmin?"⚙ Адмін":"📋 Звіт";
+  const m=document.getElementById("main");
+  if(tab==="stock"){
+    m.innerHTML=buildStock();
+    rebuildStockList();
+    wireSearch("stock-search-inp",v=>{stockSearch=v;rebuildStockList();});
+  } else if(tab==="buy"){
+    m.innerHTML=buildBuy();
+  } else if(tab==="supply"){
+    m.innerHTML=buildSupply();
+  } else if(tab==="log"){
+    m.innerHTML=buildLog();
+  } else {
+    m.innerHTML=buildSettings();
+    renderSettingsItems();
+    wireSearch("admin-search-inp",v=>{itemSearch=v;renderSettingsItems();});
+  }
+}
+
+// Підключає пошук без перемальовування — зберігає фокус і курсор
+function wireSearch(id, cb){
+  const inp=document.getElementById(id);
+  if(!inp)return;
+  inp.addEventListener("input",function(){cb(this.value);});
+  // Ставимо курсор в кінець якщо є значення
+  if(inp.value){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);}
+}
+
+// ═══════════════════ STOCK ═══════════════════
+let stockSearch="";
+
+// Оновлює тільки список товарів в залишках без скидання фокусу
+function rebuildStockList(){
+  const container=document.getElementById("stock-list-container");
+  if(!container)return;
+  const vG=gf==="all"?GROUPS:GROUPS.filter(g=>g.id===gf);
+  const srchLow=stockSearch.toLowerCase();
+  let h="";
+  vG.forEach(group=>{
+    h+=`<div style="margin-bottom:8px"><div class="sec-t">${group.emoji} ${group.label.toUpperCase()}</div>`;
+    CATS.filter(c=>c.group===group.id).forEach(cat=>{
+      const ci=items.filter(i=>i.category===cat.id&&(!srchLow||i.name.toLowerCase().includes(srchLow)));
+      if(!ci.length)return;
+      const cn=ci.filter(i=>stOf(i)!=="ok").length;
+      h+=`<div style="margin-bottom:16px"><div class="cat-hdr"><div class="cat-l">${cat.emoji} ${cat.label}</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          
+          ${cn?`<span style="font-size:10px;color:var(--warn);font-weight:700">${cn} ⚠</span>`:""}
+        </div></div>`;
+      ci.forEach(item=>{
+        const st=stOf(item),ns=normSt(item);
+        h+=`<div class="ic ${st==="ok"?"":st}${ns&&ns.level==="over"?" over-norm":""}">
+          <div class="ii">
+            <div class="iname">${e(item.name)}</div>
+            <div class="imeta">мін: ${item.minQty} ${e(item.unit)} · ${e(item.supplier)}</div>
+            ${ns?`<span class="nbadge ${ns.level}">Норма: ${ns.taken}/${ns.norm.qty} ${e(ns.norm.unit)} за ${ns.norm.days}д</span>`:""}
+          </div>
+          <div class="ctrl">
+            <button class="bsm" onclick="openTake('${item.id}')">−</button>
+            <span class="qval">${item.qty}</span>
+            <span class="ulbl">${e(item.unit)}</span>
+          </div>
+          ${cat.logT?`<button class="wobtn" onclick="openWo('${item.id}')">🗑</button>`:""}
+          <div class="sbadge s-${st}">${st==="ok"?"ОК":st==="low"?"Мало":"Немає"}</div>
+        </div>`;
+      });
+      h+=`</div>`;
+    });
+    h+=`</div>`;
+  });
+  container.innerHTML=h;
+}
+  const vG=gf==="all"?GROUPS:GROUPS.filter(g=>g.id===gf);
+  const srchLow=stockSearch.toLowerCase();
+  let h=`<div style="padding:12px 14px 0">
+    <div style="position:relative;margin-bottom:10px">
+      <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--sub);font-size:14px;pointer-events:none">🔍</span>
+      <input id="stock-search-inp" class="ip" placeholder="Пошук товару…" style="padding-left:32px" value="${e(stockSearch)}"/>
+    </div>
+    <div class="pills">${pill("Все","all",gf==="all","setGF")}${GROUPS.map(g=>pill(g.emoji+" "+g.label,g.id,gf===g.id,"setGF")).join("")}</div>`;
+
+  vG.forEach(group=>{
+    h+=`<div style="margin-bottom:8px"><div class="sec-t">${group.emoji} ${group.label.toUpperCase()}</div>`;
+    CATS.filter(c=>c.group===group.id).forEach(cat=>{
+      const ci=items.filter(i=>i.category===cat.id&&(!srchLow||i.name.toLowerCase().includes(srchLow)));
+      if(!ci.length)return;
+      const cn=ci.filter(i=>stOf(i)!=="ok").length;
+      h+=`<div style="margin-bottom:16px"><div class="cat-hdr"><div class="cat-l">${cat.emoji} ${cat.label}</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          
+          ${cn?`<span style="font-size:10px;color:var(--warn);font-weight:700">${cn} ⚠</span>`:""}
+        </div></div>`;
+      ci.forEach(item=>{
+        const st=stOf(item),ns=normSt(item);
+        h+=`<div class="ic ${st==="ok"?"":st}${ns&&ns.level==="over"?" over-norm":""}">
+          <div class="ii">
+            <div class="iname">${e(item.name)}</div>
+            <div class="imeta">мін: ${item.minQty} ${e(item.unit)} · ${e(item.supplier)}</div>
+            ${ns?`<span class="nbadge ${ns.level}">Норма: ${ns.taken}/${ns.norm.qty} ${e(ns.norm.unit)} за ${ns.norm.days}д</span>`:""}
+          </div>
+          <div class="ctrl">
+            <button class="bsm" onclick="openTake('${item.id}')">−</button>
+            <span class="qval">${item.qty}</span>
+            <span class="ulbl">${e(item.unit)}</span>
+          </div>
+          ${cat.logT?`<button class="wobtn" onclick="openWo('${item.id}')">🗑</button>`:""}
+          <div class="sbadge s-${st}">${st==="ok"?"ОК":st==="low"?"Мало":"Немає"}</div>
+        </div>`;
+      });
+      h+=`</div>`;
+    });
+    h+=`</div>`;
+  });
+function buildStock(){
+  return`<div style="padding:12px 14px 0">
+    <div style="position:relative;margin-bottom:10px">
+      <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--sub);font-size:14px;pointer-events:none">🔍</span>
+      <input id="stock-search-inp" class="ip" placeholder="Пошук товару…" style="padding-left:32px" value="${e(stockSearch)}"/>
+    </div>
+    <div class="pills">${pill("Все","all",gf==="all","setGF")}${GROUPS.map(g=>pill(g.emoji+" "+g.label,g.id,gf===g.id,"setGF")).join("")}</div>
+    <div id="stock-list-container"></div>
+  </div>`;
+}
+
+// ═══════════════════ BUY ═══════════════════
+function buildBuy(){
+  const low=items.filter(i=>stOf(i)!=="ok");
+  if(!low.length)return`<div class="empty"><div style="font-size:32px;margin-bottom:8px">✅</div><div style="color:var(--ok);font-weight:600">Все в нормі!</div></div>`;
+  let h=`<div style="padding:14px"><div style="font-size:12px;color:var(--sub);margin-bottom:12px">Нижче мінімуму · ${low.length} позицій</div>`;
+  const byS={};
+  sups.forEach(s=>{byS[s]=low.filter(i=>i.supplier===s)});
+  const other=low.filter(i=>!sups.includes(i.supplier));
+  [...sups,"__other__"].forEach(s=>{
+    const list=s==="__other__"?other:byS[s];
+    if(!list||!list.length)return;
+    h+=`<div class="bc"><div style="font-size:13px;font-weight:700;color:var(--ac);margin-bottom:10px">${s==="__other__"?"Інше":e(s)}</div>`;
+    list.forEach(item=>{
+      const cat=CATS.find(c=>c.id===item.category);
+      h+=`<div class="bir">
+        <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(item.name)}</div>
+        <div style="font-size:11px;color:var(--sub)">${cat?.label||""}</div></div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:12px;font-weight:700;color:${item.qty===0?"var(--dan)":"var(--warn)"}">${item.qty}/${item.minQty} ${e(item.unit)}</div>
+          <div style="font-size:11px;color:var(--sub)">~${Math.max(0,item.minQty*2-item.qty)} докупити</div>
+        </div></div>`;
+    });
+    h+=`</div>`;
+  });
+  return h+`</div>`;
+}
+
+// ═══════════════════ SUPPLY ═══════════════════
+function buildSupply(){
+  let h=`<div style="padding:14px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div style="font-size:13px;font-weight:700">Постачання</div>
+    <button class="bsec" onclick="openSupply()">+ Нове</button>
+  </div>`;
+  if(!supplies.length)return h+`<div class="empty">Постачань поки не було.</div></div>`;
+  supplies.forEach(s=>{
+    h+=`<div class="bc">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div><div style="font-size:13px;font-weight:700">${e(s.supplier)}</div>
+        <div style="font-size:11px;color:var(--sub)">${s.date} · ${e(s.who)}</div></div>
+        ${isAdmin?`<button onclick="openSupEdit('${s.id}')" style="background:none;border:none;color:var(--sub);font-size:12px;cursor:pointer;padding:2px 6px">✏️ ред.</button>`:""}
+      </div>
+      ${(s.lines||[]).map(l=>`<div class="bir">
+        <div style="font-size:12px;font-weight:500">${e(l.name)}</div>
+        <div style="font-size:12px;font-weight:700;color:var(--ok)">+${l.qty} ${e(l.unit)}</div>
+      </div>`).join("")}
+    </div>`;
+  });
+  return h+`</div>`;
+}
+
+// ═══════════════════ LOG ═══════════════════
+function buildLog(){
+  let h=`<div style="padding:14px"><div class="pills">
+    ${pill("🍹 Бар","bar",logSub==="bar","setLogSub")}
+    ${pill("🍳 Кухня","kitchen",logSub==="kitchen","setLogSub")}
+    ${pill("🗑 Списання","wo",logSub==="wo","setLogSub")}
+  </div>`;
+  if(!sbOk()){
+    h+=`<div style="background:var(--warn-d);border:1px solid var(--warn);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--warn);margin-bottom:12px">
+      ⚠ Supabase не підключено — журнал зберігається лише на цьому пристрої.<br>
+      <span style="color:var(--sub)">Налаштуйте в ⚙ щоб журнал був спільним для всіх.</span>
+    </div>`;
+  }
+  const filtered=logSub==="wo"
+    ?takes.filter(t=>t.isWo)
+    :takes.filter(t=>!t.isWo&&cg(t.category)===logSub);
+  if(!filtered.length)return h+`<div class="empty">Записів немає.</div></div>`;
+  const byDate={};
+  filtered.forEach(t=>{const d=(t.when||"").slice(0,10)||"?";if(!byDate[d])byDate[d]=[];byDate[d].push(t);});
+  Object.entries(byDate).sort((a,b)=>b[0].localeCompare(a[0])).forEach(([date,entries])=>{
+    h+=`<div class="ld">${date}</div>`;
+    entries.forEach(t=>{
+      const cat=CATS.find(c=>c.id===t.category);
+      h+=`<div class="le${t.isWo?" wo":""}${t.overLimit?" overlimit":""}">
+        <div style="flex:1;min-width:0">
+          <div class="lname">${e(t.itemName)}</div>
+          <div class="lmeta">${(t.when||"").slice(11,16)} · ${cat?.label||""}${t.isWo&&t.reason?` · <i>${e(t.reason)}</i>`:""}</div>
+        </div>
+        <div style="flex-shrink:0;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+          <div class="lqty" style="color:${t.isWo?"var(--wo)":t.overLimit?"var(--dan)":"var(--ac)"}">
+            −${t.qty} ${e(t.unit)}
+            ${t.overLimit?`<span class="oltag">ліміт ⚠</span>`:""}
+            ${t.isWo?`<span class="wotag">списання</span>`:""}
+          </div>
+          <div class="lwho">${e(t.name)}</div>
+          ${isAdmin?`<button onclick="openLogEdit('${t.id}')" style="background:none;border:none;color:var(--hint);font-size:11px;cursor:pointer;padding:0;margin-top:3px">✏️ ред.</button>`:""}
+        </div>
+      </div>`;
+    });
+  });
+  return h+`</div>`;
+}
+
+// ═══════════════════ SETTINGS ═══════════════════
+function buildSettings(){
+  if(!isAdmin){
+    const today=new Date().toISOString().slice(0,10);
+    const barDone=lg("f5_rep_bar_"+today); // зберігає час "14:32"
+    const kitDone=lg("f5_rep_kit_"+today);
+    const repTab=lg("f5_rep_tab")||"bar";
+    return`<div style="padding:14px">
+      <div style="font-size:13px;font-weight:700;margin-bottom:12px;text-align:center">📋 Звіт зміни</div>
+      <div style="display:flex;gap:6px;margin-bottom:16px">
+        <button onclick="setRepTab('bar')" style="flex:1;padding:10px;border-radius:10px;border:2px solid ${repTab==='bar'?'var(--ac)':'var(--bd)'};background:${repTab==='bar'?'var(--ac-d)':'var(--sf)'};color:${repTab==='bar'?'var(--ac)':'var(--sub)'};font-weight:700;font-size:13px;cursor:pointer">
+          🍹 Бар ${barDone?'✓':''}
+        </button>
+        <button onclick="setRepTab('kitchen')" style="flex:1;padding:10px;border-radius:10px;border:2px solid ${repTab==='kitchen'?'var(--ac)':'var(--bd)'};background:${repTab==='kitchen'?'var(--ac-d)':'var(--sf)'};color:${repTab==='kitchen'?'var(--ac)':'var(--sub)'};font-weight:700;font-size:13px;cursor:pointer">
+          🍳 Кухня ${kitDone?'✓':''}
+        </button>
+      </div>
+      ${repTab==='bar'?`
+        <div style="background:var(--sf);border:1px solid ${barDone?'var(--ok)':'var(--bd)'};border-radius:12px;padding:24px 20px;text-align:center">
+          ${barDone
+            ?`<div style="font-size:32px;margin-bottom:8px">✅</div>
+              <div style="font-size:14px;font-weight:700;color:var(--ok);margin-bottom:6px">Звіт бару зроблено</div>
+              <div style="font-size:12px;color:var(--sub);margin-bottom:16px">Сьогодні о <b style="color:var(--tx)">${barDone}</b></div>
+              <button onclick="confirmRepeatReport('bar')" style="background:#2a2a2a;border:1px solid var(--bd);border-radius:10px;padding:10px 18px;color:var(--tx);font-size:13px;cursor:pointer">Зробити ще раз</button>`
+            :`<div style="font-size:32px;margin-bottom:8px">🍹</div>
+              <div style="font-size:14px;font-weight:700;margin-bottom:4px">Звіт Бару</div>
+              <div style="font-size:12px;color:var(--sub);margin-bottom:16px">Залишки барних товарів</div>
+              <button class="bprim" style="margin-top:0" onclick="doReport('bar',false)">Зробити звіт</button>`}
+        </div>`:`
+        <div style="background:var(--sf);border:1px solid ${kitDone?'var(--ok)':'var(--bd)'};border-radius:12px;padding:24px 20px;text-align:center">
+          ${kitDone
+            ?`<div style="font-size:32px;margin-bottom:8px">✅</div>
+              <div style="font-size:14px;font-weight:700;color:var(--ok);margin-bottom:6px">Звіт кухні зроблено</div>
+              <div style="font-size:12px;color:var(--sub);margin-bottom:16px">Сьогодні о <b style="color:var(--tx)">${kitDone}</b></div>
+              <button onclick="confirmRepeatReport('kitchen')" style="background:#2a2a2a;border:1px solid var(--bd);border-radius:10px;padding:10px 18px;color:var(--tx);font-size:13px;cursor:pointer">Зробити ще раз</button>`
+            :`<div style="font-size:32px;margin-bottom:8px">🍳</div>
+              <div style="font-size:14px;font-weight:700;margin-bottom:4px">Звіт Кухні</div>
+              <div style="font-size:12px;color:var(--sub);margin-bottom:16px">Залишки кухонних товарів</div>
+              <button class="bprim" style="margin-top:0" onclick="doReport('kitchen',false)">Зробити звіт</button>`}
+        </div>`}
+    </div>`;
+  }
+  let h=`<div style="padding:14px">
+    <div class="adm-sec">
+      <div class="adm-sec-t">👑 Адмін-панель</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <button onclick="openStats()" style="background:var(--ac-d);border:1px solid var(--ac);border-radius:8px;padding:8px 14px;color:var(--ac);font-weight:700;font-size:12px">📊 Статистика</button>
+        <button onclick="openAdd()" style="background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:8px 14px;color:var(--tx);font-weight:600;font-size:12px">+ Позиція</button>
+        <button onclick="sbLoad().then(render)" style="background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:8px 14px;color:var(--tx);font-weight:600;font-size:12px">⟳ Синхр.</button>
+        <button onclick="doReport()" style="background:var(--ok-d);border:1px solid var(--ok);border-radius:8px;padding:8px 14px;color:var(--ok);font-weight:700;font-size:12px">📋 Звіт</button>
+        <button onclick="toggleEditMode()" id="edit-mode-btn" style="background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:8px 14px;color:var(--tx);font-weight:600;font-size:12px">✏️ Змінити</button>
+      </div>
+      <div style="font-size:11px;color:var(--sub);margin-bottom:6px">Постачальники</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px">
+        ${sups.map((s,i)=>`<span style="background:var(--sf2);border:1px solid var(--bd);border-radius:6px;padding:3px 8px;font-size:11px;display:flex;align-items:center;gap:4px">${e(s)}<button onclick="removeSup(${i})" style="background:none;border:none;color:var(--dan);font-size:12px;padding:0;cursor:pointer">×</button></span>`).join("")}
+      </div>
+      <div style="display:flex;gap:6px">
+        <input id="new-sup-inp" class="ip" placeholder="Новий постачальник" style="flex:1"/>
+        <button onclick="addSup()" style="background:var(--ac);border:none;border-radius:8px;padding:8px 12px;color:#0f0f0f;font-weight:700;font-size:13px">+</button>
+      </div>
+    </div>
+    <div style="font-size:10px;color:var(--ac);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Всі позиції</div>
+    <div style="position:relative;margin-bottom:12px">
+      <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--sub);font-size:14px;pointer-events:none">🔍</span>
+      <input id="admin-search-inp" class="ip" placeholder="Пошук товару…" style="padding-left:32px" value="${e(itemSearch)}"/>
+    </div>
+    <div id="settings-items-container"></div>
+    <button class="bprim" style="margin-bottom:24px" onclick="openAdd()">+ Додати позицію</button>
+  </div>`;
+  return h;
+}
+
+// ═══════════════════ STATS ═══════════════════
+function openStats(){
+  const today=new Date().toISOString().slice(0,10);
+  if(!statFrom)statFrom=today;if(!statTo)statTo=today;
+  renderStatPills();renderStats();
+  document.getElementById("stats-ov").style.display="flex";
+}
+function closeStats(){document.getElementById("stats-ov").style.display="none"}
+function setStatP(v){statPeriod=v;renderStatPills();renderStats()}
+function renderStatPills(){
+  document.getElementById("stat-pills").innerHTML=[["3д","3"],["7д","7"],["30д","30"],["Свій","custom"]]
+    .map(([l,v])=>`<button class="pill${statPeriod===v?" on":""}" onclick="setStatP('${v}')">${l}</button>`).join("");
+  const cr=document.getElementById("stat-custom");
+  cr.style.display=statPeriod==="custom"?"flex":"none";
+  document.getElementById("stat-from").value=statFrom;
+  document.getElementById("stat-to").value=statTo;
+}
+function renderStats(){
+  if(statPeriod==="custom"){
+    statFrom=document.getElementById("stat-from")?.value||statFrom;
+    statTo=document.getElementById("stat-to")?.value||statTo;
+  }
+  let fromMs,toMs;
+  if(statPeriod==="custom"){fromMs=new Date(statFrom).getTime();toMs=new Date(statTo).getTime()+86399999;}
+  else{toMs=Date.now();fromMs=toMs-Number(statPeriod)*86400000;}
+  const filtered=takes.filter(t=>{
+    if(t.isWo)return false;
+    const ts=new Date((t.when||"").replace(" ","T")).getTime();
+    return ts>=fromMs&&ts<=toMs;
+  });
+  const agg={};
+  filtered.forEach(t=>{
+    if(!agg[t.itemId])agg[t.itemId]={name:t.itemName,unit:t.unit,category:t.category,total:0};
+    agg[t.itemId].total+=Number(t.qty);
+  });
+  const sorted=Object.values(agg).sort((a,b)=>b.total-a.total);
+  let h="";
+  if(!sorted.length){h=`<div class="empty">За цей період нічого не брали.</div>`}
+  else{
+    GROUPS.forEach(group=>{
+      const gi=sorted.filter(x=>cg(x.category)===group.id);if(!gi.length)return;
+      h+=`<div class="stat-card"><div style="font-size:12px;font-weight:800;margin-bottom:8px">${group.emoji} ${group.label}</div>
+        ${gi.map(x=>`<div class="stat-row"><div style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(x.name)}</div>
+          <div style="font-size:13px;font-weight:700;color:var(--ac);flex-shrink:0;margin-left:8px">${x.total} ${e(x.unit)}</div></div>`).join("")}
+      </div>`;
+    });
+  }
+  const el=document.getElementById("stats-content");if(el)el.innerHTML=h;
+}
+
+// ═══════════════════ ITEM ACTIONS ═══════════════════
+function qdec(id){items=items.map(i=>i.id===id?{...i,qty:Math.max(0,i.qty-1)}:i);saveLocal();sbUpsertItems();render()}
+function uf(id,f,v){items=items.map(i=>i.id===id?{...i,[f]:v}:i);saveLocal();sbUpsertItems()}
+function un(id,f,v){
+  items=items.map(i=>{
+    if(i.id!==id)return i;
+    const norm=i.norm?{...i.norm}:{qty:1,unit:i.unit,days:1};
+    if(f==="qty")norm.qty=Number(v)||0;else if(f==="days")norm.days=Number(v)||1;else norm[f]=v;
+    if(!norm.qty&&!norm.days)return{...i,norm:null};
+    return{...i,norm};
+  });
+  saveLocal();sbUpsertItems();
+}
+function delItem(id){
+  if(!confirm("Видалити?"))return;
+  items=items.filter(i=>i.id!==id);
+  saveLocal();
+  if(sbOk()) sbFetch("items?id=eq."+id,{method:"DELETE"});
+  renderSettingsItems();
+}
+
+// ═══════════════════ TAKE ═══════════════════
+function openTake(id){
+  takeId=id;const item=items.find(i=>i.id===id);
+  document.getElementById("take-t").textContent="Взяти: "+item.name;
+  document.getElementById("take-info").innerHTML=`На залишку: <b style="color:var(--tx)">${item.qty} ${item.unit}</b>`;
+  document.getElementById("take-name").value=myName;
+  document.getElementById("take-qty").value=1;
+  document.getElementById("take-when").value=nowDT();
+  updateNormWarn(item,1);
+  document.getElementById("take-ov").style.display="flex";
+}
+function onTakeQty(){const item=items.find(i=>i.id===takeId);if(item)updateNormWarn(item,+document.getElementById("take-qty").value||0)}
+function updateNormWarn(item,qty){
+  const block=document.getElementById("norm-warn-block"),txt=document.getElementById("norm-warn-text");
+  if(!item.norm){block.style.display="none";return}
+  const already=takenIn(item.id,item.norm.days),total=already+qty;
+  if(total>item.norm.qty){
+    const last=lastTake(item.id);
+    block.style.display="";
+    txt.innerHTML=`Ліміт: <b>${item.norm.qty} ${item.norm.unit}</b> за ${item.norm.days} дні.<br>
+Вже взято: <b>${already} ${item.norm.unit}</b>. Буде: <b style="color:var(--dan)">${total}</b> — перевищення!<br>
+${last?`Останній: <b>${e(last.name)}</b>, ${(last.when||"").slice(0,16)}, ${last.qty} ${e(last.unit)}.`:""}`;
+  } else block.style.display="none";
+}
+function closeTake(){document.getElementById("take-ov").style.display="none";takeId=null}
+function confirmTake(){
+  const name=document.getElementById("take-name").value.trim();
+  const qty=Number(document.getElementById("take-qty").value)||0;
+  const when=document.getElementById("take-when").value||nowDT();
+  if(!name){toast("Введіть ім'я","err");return}
+  if(qty<=0){toast("Вкажіть кількість","err");return}
+  const item=items.find(i=>i.id===takeId);
+  // Не можна взяти більше ніж є на складі
+  if(qty>item.qty){
+    toast(`На складі лише ${item.qty} ${item.unit}`,"err");
+    document.getElementById("take-qty").value=item.qty;
+    return;
+  }
+  // Не можна взяти якщо 0
+  if(item.qty===0){
+    toast("Товар закінчився — залишок 0","err");
+    return;
+  }
+  const already=item.norm?takenIn(item.id,item.norm.days):0;
+  const isOL=item.norm&&(already+qty)>item.norm.qty;
+  items=items.map(i=>i.id===item.id?{...i,qty:Math.max(0,i.qty-qty)}:i);
+  const entry={id:uid(),itemId:item.id,itemName:item.name,category:item.category,
+    unit:item.unit,qty,name,when,isWo:false,overLimit:isOL,reason:""};
+  takes=[entry,...takes];
+  myName=name;ls(K.name,name);
+  saveLocal();closeTake();render();
+  sbUpsertItems();sbInsertTake(entry);
+}
+
+// ═══════════════════ WRITEOFF ═══════════════════
+function openWo(id){
+  woId=id;const item=items.find(i=>i.id===id);
+  document.getElementById("wo-t").textContent="🗑 Списання: "+item.name;
+  document.getElementById("wo-info").innerHTML=`На залишку: <b style="color:var(--tx)">${item.qty} ${item.unit}</b>`;
+  document.getElementById("wo-unit").textContent=item.unit;
+  document.getElementById("wo-name").value=myName;
+  document.getElementById("wo-qty").value=1;document.getElementById("wo-reason").value="";
+  document.getElementById("wo-when").value=nowDT();
+  document.getElementById("wo-ov").style.display="flex";
+}
+function closeWo(){document.getElementById("wo-ov").style.display="none";woId=null}
+function confirmWo(){
+  const name=document.getElementById("wo-name").value.trim();
+  const qty=Number(document.getElementById("wo-qty").value)||0;
+  const reason=document.getElementById("wo-reason").value.trim();
+  const when=document.getElementById("wo-when").value||nowDT();
+  if(!name||qty<=0)return;
+  const item=items.find(i=>i.id===woId);
+  items=items.map(i=>i.id===item.id?{...i,qty:Math.max(0,i.qty-qty)}:i);
+  const entry={id:uid(),itemId:item.id,itemName:item.name,category:item.category,
+    unit:item.unit,qty,name,when,reason,isWo:true,overLimit:false};
+  takes=[entry,...takes];
+  myName=name;ls(K.name,name);
+  saveLocal();closeWo();render();
+  sbUpsertItems();sbInsertTake(entry);
+}
+
+// ═══════════════════ SUPPLY ═══════════════════
+function openSupply(){
+  supLines=[];supSup=sups[0]||"Метро";supSearchVal="";
+  document.getElementById("sup-date").value=new Date().toISOString().slice(0,10);
+  document.getElementById("sup-who").value=myName;
+  renderSupModal();document.getElementById("sup-ov").style.display="flex";
+}
+function closeSupply(){document.getElementById("sup-ov").style.display="none"}
+function onSupSearch(v){supSearchVal=v;renderSupItemList()}
+function renderSupModal(){
+  document.getElementById("sup-chips").innerHTML=sups.map(s=>
+    `<button class="schip${s===supSup?" on":""}" onclick="setSupSup('${e(s)}')">${e(s)}</button>`).join("");
+  renderSupLines();renderSupItemList();
+}
+function setSupSup(s){supSup=s;document.getElementById("sup-chips").querySelectorAll(".schip").forEach(b=>b.classList.toggle("on",b.textContent===s))}
+function renderSupLines(){
+  const d=document.getElementById("sup-lines");
+  if(!supLines.length){d.innerHTML=`<div style="font-size:12px;color:var(--hint);text-align:center;padding:6px">Оберіть товари нижче</div>`;return}
+  d.innerHTML=supLines.map((line,idx)=>{
+    const it=items.find(i=>i.id===line.itemId);
+    return`<div style="background:#111;border-radius:8px;padding:9px 11px;margin-bottom:5px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+        <div style="font-size:12px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(it?.name||"?")}</div>
+        <button onclick="removeSupLine(${idx})" style="background:none;border:none;color:var(--dan);font-size:14px;padding:0;cursor:pointer;flex-shrink:0;margin-left:6px">✕</button>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input type="number" placeholder="кількість" value="${line.qty}" onchange="supLines[${idx}].qty=this.value" class="ip" style="flex:1"/>
+        <span style="font-size:12px;color:var(--sub);flex-shrink:0">${e(it?.unit||"")}</span>
+      </div>
+    </div>`;
+  }).join("");
+}
+function renderSupItemList(){
+  const search=supSearchVal.toLowerCase();
+  const visible=items.filter(i=>!search||i.name.toLowerCase().includes(search));
+  let html="",lg2="",lc2="";
+  visible.forEach(item=>{
+    const cat=CATS.find(c=>c.id===item.category);
+    const group=GROUPS.find(g=>g.id===cat?.group);
+    if(group&&group.id!==lg2){html+=`<div style="font-size:10px;color:var(--tx);font-weight:800;margin:9px 0 3px;text-transform:uppercase;letter-spacing:1px">${group.emoji} ${group.label}</div>`;lg2=group.id;lc2="";}
+    if(cat&&cat.id!==lc2){html+=`<div style="font-size:9px;color:var(--ac);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px">${cat.emoji} ${cat.label}</div>`;lc2=cat.id;}
+    const added=supLines.find(l=>l.itemId===item.id);
+    html+=`<div class="si-row" style="${added?"background:var(--ok-d);border-radius:6px;padding:5px 7px;margin-bottom:2px;":""}">
+      <div style="min-width:0;flex:1"><div style="font-size:12px;font-weight:${added?700:400};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(item.name)}</div>
+      <div style="font-size:10px;color:var(--sub)">на складі: ${item.qty} ${e(item.unit)}</div></div>
+      <button onclick="openSQty('${item.id}')"
+        style="background:${added?"var(--ok)":"var(--sf2)"};border:1px solid ${added?"var(--ok)":"var(--bd)"};border-radius:6px;padding:4px 9px;color:${added?"#0f0f0f":"var(--tx)"};font-size:11px;font-weight:700;flex-shrink:0;cursor:pointer;white-space:nowrap">
+        ${added?`✓ ${added.qty} ${e(item.unit)}`:"+ Обрати"}
+      </button>
+    </div>`;
+  });
+  document.getElementById("sup-item-list").innerHTML=html;
+}
+function openSQty(id){
+  sqtyItemId=id;const it=items.find(i=>i.id===id);const already=supLines.find(l=>l.itemId===id);
+  document.getElementById("sqty-t").textContent=it?.name||"Кількість";
+  document.getElementById("sqty-info").innerHTML=`На складі: <b style="color:var(--tx)">${it?.qty||0} ${it?.unit||""}</b>`;
+  document.getElementById("sqty-val").value=already?.qty||"";
+  document.getElementById("sqty-unit").textContent=it?.unit||"";
+  document.getElementById("sqty-ov").style.display="flex";
+  setTimeout(()=>{const v=document.getElementById("sqty-val");v.focus();v.select()},100);
+}
+function closeSQty(){document.getElementById("sqty-ov").style.display="none";sqtyItemId=null}
+function confirmSQty(){
+  const qty=Number(document.getElementById("sqty-val").value);if(!sqtyItemId)return;
+  const idx=supLines.findIndex(l=>l.itemId===sqtyItemId);
+  if(qty>0){if(idx>=0)supLines[idx].qty=qty;else supLines.push({itemId:sqtyItemId,qty});}
+  else{if(idx>=0)supLines.splice(idx,1);}
+  closeSQty();renderSupLines();renderSupItemList();
+}
+function removeSupLine(idx){supLines.splice(idx,1);renderSupLines();renderSupItemList()}
+function confirmSupply(){
+  const filled=supLines.filter(l=>Number(l.qty)>0);
+  if(!filled.length){toast("Вкажіть кількість хоча б для одного товару","warn");return}
+  const date=document.getElementById("sup-date").value;
+  const who=document.getElementById("sup-who").value.trim()||myName;
+  items=items.map(it=>{const l=filled.find(l=>l.itemId===it.id);return l?{...it,qty:it.qty+Number(l.qty)}:it;});
+  const entry={id:uid(),date,supplier:supSup,who,lines:filled.map(l=>{
+    const it=items.find(i=>i.id===l.itemId);return{name:it?.name||l.itemId,unit:it?.unit||"",qty:Number(l.qty)};
+  })};
+  supplies=[entry,...supplies];saveLocal();closeSupply();render();
+  sbUpsertItems();sbInsertSupply(entry);
+}
+
+// ═══════════════════ ADD ITEM ═══════════════════
+function openAdd(){
+  document.getElementById("new-sup").innerHTML=sups.map(s=>`<option>${e(s)}</option>`).join("");
+  document.getElementById("add-ov").style.display="flex";
+  setTimeout(()=>document.getElementById("new-name").focus(),100);
+}
+function closeAdd(){document.getElementById("add-ov").style.display="none"}
+function confirmAdd(){
+  const name=document.getElementById("new-name").value.trim();if(!name)return;
+  const nq=Number(document.getElementById("new-nq").value)||0;
+  const nd=Number(document.getElementById("new-nd").value)||0;
+  const nu=document.getElementById("new-nu").value.trim();
+  const norm=(nq&&nd)?{qty:nq,unit:nu||document.getElementById("new-unit").value,days:nd}:null;
+  const item={id:uid(),category:document.getElementById("new-cat").value,name,
+    unit:document.getElementById("new-unit").value||"уп",
+    qty:Number(document.getElementById("new-qty").value)||0,
+    minQty:Number(document.getElementById("new-min").value)||1,
+    supplier:document.getElementById("new-sup").value,norm};
+  items=[...items,item];saveLocal();closeAdd();render();sbUpsertItems();
+}
+
+// ═══════════════════ SUPPLIERS ═══════════════════
+function addSup(){const inp=document.getElementById("new-sup-inp");const s=inp.value.trim();if(!s||sups.includes(s))return;sups=[...sups,s];ls(K.sups,sups);inp.value="";render()}
+function removeSup(idx){sups.splice(idx,1);ls(K.sups,sups);render()}
+
+// ═══════════════════ SYSTEM SETTINGS ═══════════════════
+function toggleEdit(section){
+  const el=document.getElementById(section+"-edit");
+  const visible=el.style.display==="none";
+  el.style.display=visible?"block":"none";
+  if(visible){
+    if(section==="sb"){
+      document.getElementById("sys-sb-url").value=sbURL===SB_URL_DEFAULT?"":sbURL;
+      document.getElementById("sys-sb-key").value=sbKey===SB_KEY_DEFAULT?"":sbKey;
+    }
+    if(section==="tg") document.getElementById("sys-tg").value=tgWH===TG_DEFAULT?"":tgWH;
+    if(section==="gs") document.getElementById("sys-gs").value=gsURL===GS_DEFAULT?"":gsURL;
+  }
+}
+function openSysSettings(){
+  // Оновлюємо статуси
+  const sbLbl=document.getElementById("sb-status-label");
+  const sbUrl=document.getElementById("sb-status-url");
+  if(sbLbl){sbLbl.textContent=sbOk()?"Підключено ✓":"Не підключено";sbLbl.style.color=sbOk()?"var(--ok)":"var(--warn)";}
+  if(sbUrl){sbUrl.textContent=sbURL.replace("https://","").split(".")[0]+"…supabase.co";}
+  // Ховаємо всі edit-панелі
+  ["sb","tg","gs"].forEach(s=>{const el=document.getElementById(s+"-edit");if(el)el.style.display="none";});
+  ["sys-pw-cur","sys-pw-new","sys-pw-rep"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("sys-pw-err").style.display="none";
+  document.getElementById("sys-pw-ok").style.display="none";
+  document.getElementById("sys-ov").style.display="flex";
+}
+function closeSysSettings(){document.getElementById("sys-ov").style.display="none"}
+
+function saveSb(){
+  let url=(document.getElementById("sys-sb-url").value.trim()||SB_URL_DEFAULT);
+  url=url.replace(/\/rest\/v1\/?$/,"").replace(/\/$/,"");
+  const key=document.getElementById("sys-sb-key").value.trim()||SB_KEY_DEFAULT;
+  sbURL=url;sbKey=key;
+  ls(K.sbURL,sbURL);ls(K.sbKey,sbKey);
+  document.getElementById("sb-edit").style.display="none";
+  const lbl=document.getElementById("sb-status-label");
+  if(lbl){lbl.textContent="Збережено — натисни Тест";lbl.style.color="var(--ac)";}
+  toast("Supabase збережено ✓");
+}
+async function testSb(){
+  toast("Перевіряю…");
+  const res=await sbFetch("items?select=id&limit=1");
+  const lbl=document.getElementById("sb-status-label");
+  if(res!==null){
+    toast("Supabase: з'єднання є ✓");
+    if(lbl){lbl.textContent="Підключено ✓";lbl.style.color="var(--ok)";}
+  } else {
+    toast("Помилка з'єднання","err");
+    if(lbl){lbl.textContent="Помилка з'єднання ✗";lbl.style.color="var(--dan)";}
+  }
+}
+function saveTg(){
+  tgWH=document.getElementById("sys-tg").value.trim()||TG_DEFAULT;
+  ls(K.tg,tgWH);
+  document.getElementById("tg-edit").style.display="none";
+  toast("Telegram збережено ✓");
+}
+async function testTg(){
+  await sendTg("✅ Flat5 Хози: тест "+new Date().toLocaleTimeString("uk"));
+  toast("Надіслано — перевір бот ✓");
+}
+function saveGs(){
+  gsURL=document.getElementById("sys-gs").value.trim()||GS_DEFAULT;
+  ls(K.gs,gsURL);
+  document.getElementById("gs-edit").style.display="none";
+  toast("Google Sheets збережено ✓");
+}
+async function testGs(){
+  await sendToSheets({type:"test"});
+  toast("Запит надіслано — перевір таблицю ✓");
+}
+
+async function sendToSheets(data){
+  if(!gsURL)return false;
+  try{
+    await fetch(gsURL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"text/plain"},
+      body:JSON.stringify(data)
+    });
+    return true;
+  }catch(err){
+    console.error("Sheets:",err);
+    return false;
+  }
+}
+
+// ═══════════════════ SUPPLY EDIT (адмін) ═══════════════════
+let supEditId=null;
+let supEditOrigLines=[];
+
+function openSupEdit(id){
+  const s=supplies.find(s=>s.id===id);if(!s)return;
+  supEditId=id;
+  // Зберігаємо оригінальні кількості щоб порахувати різницю
+  supEditOrigLines=JSON.parse(JSON.stringify(s.lines||[]));
+  const sel=document.getElementById("se-supplier");
+  sel.innerHTML=sups.map(sup=>`<option${sup===s.supplier?" selected":""}>${e(sup)}</option>`).join("");
+  document.getElementById("se-date").value=s.date||"";
+  document.getElementById("se-who").value=s.who||"";
+  renderSupEditLines(s.lines||[]);
+  document.getElementById("sup-edit-ov").style.display="flex";
+}
+
+function renderSupEditLines(lines){
+  document.getElementById("se-lines").innerHTML=lines.map((l,idx)=>`
+    <div style="background:#111;border-radius:8px;padding:9px 11px;margin-bottom:5px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+        <div style="font-size:12px;font-weight:600">${e(l.name)}</div>
+        <button onclick="removeSupEditLine(${idx})" style="background:none;border:none;color:var(--dan);font-size:14px;padding:0;cursor:pointer">✕</button>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input type="number" value="${l.qty}" data-idx="${idx}" class="ip se-qty-inp" style="flex:1"/>
+        <span style="font-size:12px;color:var(--sub);flex-shrink:0">${e(l.unit)}</span>
+      </div>
+    </div>`).join("");
+}
+
+function closeSupEdit(){document.getElementById("sup-edit-ov").style.display="none";supEditId=null;supEditOrigLines=[];}
+
+function removeSupEditLine(idx){
+  const s=supplies.find(s=>s.id===supEditId);if(!s)return;
+  // Повертаємо кількість видаленої лінії зі складу
+  const removed=s.lines[idx];
+  if(removed){
+    const item=items.find(i=>i.name===removed.name);
+    if(item) items=items.map(i=>i.id===item.id?{...i,qty:Math.max(0,i.qty-Number(removed.qty||0))}:i);
+  }
+  s.lines.splice(idx,1);
+  supEditOrigLines.splice(idx,1);
+  renderSupEditLines(s.lines);
+}
+
+function confirmSupEdit(){
+  if(!supEditId)return;
+  const supplier=document.getElementById("se-supplier").value;
+  const date=document.getElementById("se-date").value;
+  const who=document.getElementById("se-who").value.trim();
+  const s=supplies.find(s=>s.id===supEditId);
+  if(!s)return;
+  // Читаємо нові кількості з інпутів
+  document.querySelectorAll(".se-qty-inp").forEach(inp=>{
+    const idx=Number(inp.dataset.idx);
+    if(s.lines[idx]) s.lines[idx].qty=Number(inp.value)||0;
+  });
+  // Коригуємо залишки — різниця нова-стара
+  s.lines.forEach((l,idx)=>{
+    const orig=supEditOrigLines[idx];
+    if(!orig)return;
+    const diff=Number(l.qty||0)-Number(orig.qty||0);
+    if(diff!==0){
+      const item=items.find(i=>i.name===l.name);
+      if(item) items=items.map(i=>i.id===item.id?{...i,qty:Math.max(0,i.qty+diff)}:i);
+    }
+  });
+  supplies=supplies.map(sup=>sup.id===supEditId?{...sup,supplier,date,who,lines:s.lines}:sup);
+  saveLocal();sbUpsertItems();
+  if(sbOk()) sbFetch("supplies?id=eq."+supEditId,{method:"PATCH",body:JSON.stringify({supplier,date,who,lines:s.lines})});
+  closeSupEdit();render();
+  toast("Постачання збережено ✓");
+}
+
+function deleteSupply(){
+  if(!supEditId)return;
+  if(!confirm("Видалити це постачання? Залишки зменшаться відповідно."))return;
+  const s=supplies.find(s=>s.id===supEditId);
+  if(s){
+    // Віднімаємо кількість з залишків
+    (s.lines||[]).forEach(l=>{
+      const item=items.find(i=>i.name===l.name);
+      if(item) items=items.map(i=>i.id===item.id?{...i,qty:Math.max(0,i.qty-Number(l.qty||0))}:i);
+    });
+  }
+  supplies=supplies.filter(s=>s.id!==supEditId);
+  saveLocal();sbUpsertItems();
+  if(sbOk()) sbFetch("supplies?id=eq."+supEditId,{method:"DELETE"});
+  closeSupEdit();render();
+  toast("Постачання видалено, залишки оновлено");
+}
+let logEditId=null;
+function openLogEdit(id){
+  const t=takes.find(t=>t.id===id);if(!t)return;
+  logEditId=id;
+  document.getElementById("le-item").value=t.itemName||"";
+  document.getElementById("le-name").value=t.name||"";
+  document.getElementById("le-qty").value=t.qty||1;
+  document.getElementById("le-unit").textContent=t.unit||"";
+  document.getElementById("le-when").value=(t.when||"").replace(" ","T").slice(0,16);
+  const rl=document.getElementById("le-reason-lbl");
+  const ri=document.getElementById("le-reason");
+  if(t.isWo){rl.style.display="";ri.style.display="";ri.value=t.reason||"";}
+  else{rl.style.display="none";ri.style.display="none";}
+  document.getElementById("log-edit-ov").style.display="flex";
+}
+function closeLogEdit(){document.getElementById("log-edit-ov").style.display="none";logEditId=null}
+function confirmLogEdit(){
+  if(!logEditId)return;
+  const name=document.getElementById("le-name").value.trim();
+  const newQty=Number(document.getElementById("le-qty").value)||1;
+  const when=document.getElementById("le-when").value||nowDT();
+  const reason=document.getElementById("le-reason").value.trim();
+  const whenFmt=when.replace("T"," ");
+  const orig=takes.find(t=>t.id===logEditId);
+  if(!orig)return;
+  // Коригуємо залишок — різниця кількостей
+  const diff=Number(orig.qty||0)-newQty; // якщо зменшили взяте — повертаємо на склад
+  if(diff!==0){
+    items=items.map(i=>i.id===orig.itemId?{...i,qty:Math.max(0,i.qty+diff)}:i);
+    saveLocal();sbUpsertItems();
+  }
+  takes=takes.map(t=>t.id===logEditId?{...t,name,qty:newQty,when:whenFmt,reason}:t);
+  saveLocal();
+  if(sbOk()) sbFetch("takes?id=eq."+logEditId,{method:"PATCH",body:JSON.stringify({name,qty:newQty,when_dt:whenFmt,reason:reason||null})});
+  closeLogEdit();render();
+  toast("Запис збережено ✓");
+}
+
+function deleteLogEntry(){
+  if(!logEditId)return;
+  if(!confirm("Видалити цей запис? Кількість повернеться на склад."))return;
+  const orig=takes.find(t=>t.id===logEditId);
+  if(orig&&!orig.isWo){
+    // Повертаємо кількість на склад
+    items=items.map(i=>i.id===orig.itemId?{...i,qty:i.qty+Number(orig.qty||0)}:i);
+    saveLocal();sbUpsertItems();
+  } else if(orig&&orig.isWo){
+    // Списання — теж повертаємо
+    items=items.map(i=>i.id===orig.itemId?{...i,qty:i.qty+Number(orig.qty||0)}:i);
+    saveLocal();sbUpsertItems();
+  }
+  takes=takes.filter(t=>t.id!==logEditId);
+  saveLocal();
+  if(sbOk()) sbFetch("takes?id=eq."+logEditId,{method:"DELETE"});
+  closeLogEdit();render();
+  toast("Запис видалено, залишок оновлено ✓");
+}
+
+let itemSearch="";
+let editMode=false;
+let selectedItems=new Set();
+
+function toggleEditMode(){
+  editMode=!editMode;
+  selectedItems.clear();
+  const btn=document.getElementById("edit-mode-btn");
+  if(btn){
+    btn.textContent=editMode?"✓ Готово":"✏️ Змінити";
+    btn.style.background=editMode?"var(--ac-d)":"var(--sf2)";
+    btn.style.borderColor=editMode?"var(--ac)":"var(--bd)";
+    btn.style.color=editMode?"var(--ac)":"var(--tx)";
+  }
+  renderSettingsItems();
+  // Показуємо панель видалення якщо є вибрані
+  updateDeletePanel();
+}
+
+function toggleSelectItem(id){
+  if(selectedItems.has(id)) selectedItems.delete(id);
+  else selectedItems.add(id);
+  updateDeletePanel();
+  // Оновлюємо тільки стан чекбоксів без перемальовування
+  document.querySelectorAll(`[data-item-id="${id}"]`).forEach(el=>{
+    el.style.background=selectedItems.has(id)?"var(--dan-d)":"var(--sf)";
+    el.style.borderColor=selectedItems.has(id)?"var(--dan)":"var(--bd)";
+  });
+}
+
+function updateDeletePanel(){
+  let panel=document.getElementById("edit-delete-panel");
+  if(!editMode||selectedItems.size===0){
+    if(panel) panel.style.display="none";
+    return;
+  }
+  if(!panel){
+    panel=document.createElement("div");
+    panel.id="edit-delete-panel";
+    panel.style.cssText="position:fixed;bottom:0;left:0;right:0;background:#1c1c1c;border-top:1px solid var(--dan);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;z-index:50";
+    document.body.appendChild(panel);
+  }
+  panel.style.display="flex";
+  panel.innerHTML=`<div style="font-size:13px;color:var(--tx)">Вибрано: <b>${selectedItems.size}</b></div>
+    <div style="display:flex;gap:8px">
+      <button onclick="selectedItems.clear();updateDeletePanel();renderSettingsItems()" style="background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:8px 14px;color:var(--tx);font-size:13px;cursor:pointer">Скасувати</button>
+      <button onclick="deleteSelected()" style="background:var(--dan);border:none;border-radius:8px;padding:8px 14px;color:#fff;font-weight:700;font-size:13px;cursor:pointer">🗑 Видалити (${selectedItems.size})</button>
+    </div>`;
+}
+
+function deleteSelected(){
+  if(!selectedItems.size)return;
+  if(!confirm(`Видалити ${selectedItems.size} позицій?`))return;
+  const ids=[...selectedItems];
+  ids.forEach(id=>{
+    if(sbOk()) sbFetch("items?id=eq."+id,{method:"DELETE"});
+  });
+  items=items.filter(i=>!selectedItems.has(i.id));
+  selectedItems.clear();
+  saveLocal();
+  updateDeletePanel();
+  renderSettingsItems();
+}
+
+function setItemSearch(v){itemSearch=v;renderSettingsItems()}
+
+// Перемальовуємо тільки список товарів без скидання всієї сторінки
+function renderSettingsItems(){
+  const container=document.getElementById("settings-items-container");
+  if(!container)return;
+  const srchLow=itemSearch.toLowerCase();
+  let h="";
+  GROUPS.forEach(group=>{
+    h+=`<div style="margin-bottom:8px"><div class="sec-t">${group.emoji} ${group.label.toUpperCase()}</div>`;
+    CATS.filter(c=>c.group===group.id).forEach(cat=>{
+      const ci=items.filter(i=>i.category===cat.id&&(!srchLow||i.name.toLowerCase().includes(srchLow)));
+      if(!ci.length)return;
+      h+=`<div style="margin-bottom:18px"><div style="font-size:10px;color:var(--sub);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">${cat.emoji} ${cat.label}</div>`;
+      ci.forEach(item=>{
+        const n=item.norm;
+        const isSel=selectedItems.has(item.id);
+        if(editMode){
+          h+=`<div data-item-id="${item.id}"
+            onclick="toggleSelectItem('${item.id}')"
+            style="background:${isSel?"var(--dan-d)":"var(--sf)"};border:1px solid ${isSel?"var(--dan)":"var(--bd)"};border-radius:10px;padding:11px 13px;margin-bottom:6px;display:flex;align-items:center;gap:10px;transition:background .15s;user-select:none">
+            <div class="drag-handle" data-id="${item.id}"
+              style="font-size:20px;color:var(--sub);flex-shrink:0;cursor:grab;padding:4px;touch-action:none"
+              onclick="event.stopPropagation()">⠿</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e(item.name)}</div>
+              <div style="font-size:11px;color:var(--sub)">${item.qty} ${e(item.unit)} · мін ${item.minQty} · ${e(item.supplier)}</div>
+            </div>
+            <div style="width:22px;height:22px;border-radius:6px;border:2px solid ${isSel?"var(--dan)":"var(--bd)"};background:${isSel?"var(--dan)":"transparent"};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              ${isSel?`<span style="color:#fff;font-size:13px">✓</span>`:""}
+            </div>
+          </div>`;
+        } else {
+          // Звичайний режим редагування полів
+          h+=`<div class="set-item">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:7px;margin-bottom:7px">
+              <input value="${e(item.name)}" onchange="uf('${item.id}','name',this.value)" class="ip" style="font-weight:600;font-size:13px;flex:1"/>
+              <button onclick="delItem('${item.id}')" style="background:none;border:none;color:var(--dan);font-size:15px;padding:0;cursor:pointer">✕</button>
+            </div>
+            <div class="set-row">
+              <span style="font-size:10px;color:var(--sub)">Залишок:</span>
+              <input type="number" value="${item.qty}" min="0" onchange="uf('${item.id}','qty',+this.value)" class="ip" style="width:60px"/>
+              <span style="font-size:10px;color:var(--sub)">Мін:</span>
+              <input type="number" value="${item.minQty}" min="0" onchange="uf('${item.id}','minQty',+this.value)" class="ip" style="width:54px"/>
+              <input value="${e(item.unit)}" onchange="uf('${item.id}','unit',this.value)" class="ip" style="width:54px" placeholder="шт/уп"/>
+              <select onchange="uf('${item.id}','supplier',this.value)" class="ip" style="flex:1;min-width:80px">
+                ${sups.map(s=>`<option${s===item.supplier?" selected":""}>${e(s)}</option>`).join("")}
+              </select>
+            </div>
+            <div class="norm-row">
+              <span style="font-size:10px;color:var(--sub);flex-shrink:0">Норма:</span>
+              <span style="font-size:11px;color:var(--sub)">≤</span>
+              <input type="number" min="0" placeholder="—" value="${n?n.qty:""}" onchange="un('${item.id}','qty',this.value)" class="ip" style="width:50px"/>
+              <input placeholder="уп" value="${n?e(n.unit):""}" onchange="un('${item.id}','unit',this.value)" class="ip" style="width:46px"/>
+              <span style="font-size:11px;color:var(--sub)">за</span>
+              <input type="number" min="1" placeholder="—" value="${n?n.days:""}" onchange="un('${item.id}','days',this.value)" class="ip" style="width:46px"/>
+              <span style="font-size:11px;color:var(--sub)">дні</span>
+            </div>
+          </div>`;
+        }
+      });
+      h+=`</div>`;
+    });
+    h+=`</div>`;
+  });
+  container.innerHTML=h;
+  updateDeletePanel();
+  if(editMode) setTimeout(initDragHandles,0);
+}
+
+// ═══════════════ DRAG & DROP (touch + mouse) ═══════════════
+let dragSrcId=null;
+let dragEl=null;
+let dragPlaceholder=null;
+let dragStartY=0;
+
+function initDragHandles(){
+  document.querySelectorAll(".drag-handle").forEach(handle=>{
+    handle.addEventListener("mousedown",startDrag,{passive:false});
+    handle.addEventListener("touchstart",startDrag,{passive:false});
+  });
+}
+
+function startDrag(ev){
+  ev.preventDefault();ev.stopPropagation();
+  const id=ev.currentTarget.dataset.id;
+  dragSrcId=id;
+  dragEl=ev.currentTarget.closest("[data-item-id]");
+  if(!dragEl)return;
+  dragStartY=ev.touches?ev.touches[0].clientY:ev.clientY;
+  dragEl.style.opacity="0.5";
+  dragEl.style.transition="none";
+  // Placeholder
+  dragPlaceholder=document.createElement("div");
+  dragPlaceholder.style.cssText=`height:${dragEl.offsetHeight}px;background:var(--ac-d);border:2px dashed var(--ac);border-radius:10px;margin-bottom:6px`;
+  dragEl.after(dragPlaceholder);
+  document.addEventListener("mousemove",onDrag,{passive:false});
+  document.addEventListener("touchmove",onDrag,{passive:false});
+  document.addEventListener("mouseup",endDrag);
+  document.addEventListener("touchend",endDrag);
+}
+
+function onDrag(ev){
+  if(!dragEl||!dragSrcId)return;
+  ev.preventDefault();
+  const y=ev.touches?ev.touches[0].clientY:ev.clientY;
+  const container=dragEl.parentElement;
+  if(!container)return;
+  const siblings=[...container.querySelectorAll("[data-item-id]")].filter(el=>el!==dragEl);
+  let inserted=false;
+  for(const sib of siblings){
+    const rect=sib.getBoundingClientRect();
+    if(y<rect.top+rect.height/2){
+      container.insertBefore(dragPlaceholder,sib);
+      inserted=true;break;
+    }
+  }
+  if(!inserted) container.appendChild(dragPlaceholder);
+}
+
+function endDrag(){
+  document.removeEventListener("mousemove",onDrag);
+  document.removeEventListener("touchmove",onDrag);
+  document.removeEventListener("mouseup",endDrag);
+  document.removeEventListener("touchend",endDrag);
+  if(!dragEl||!dragSrcId||!dragPlaceholder){dragSrcId=null;dragEl=null;dragPlaceholder=null;return}
+  dragEl.style.opacity="";dragEl.style.transition="";
+  // Визначаємо новий індекс
+  const container=dragPlaceholder.parentElement;
+  if(container){
+    const allIds=[...container.querySelectorAll("[data-item-id]")].map(el=>el.dataset.itemId);
+    const phIdx=[...container.children].indexOf(dragPlaceholder);
+    dragPlaceholder.remove();
+    // Переставляємо в масиві items
+    const fromIdx=items.findIndex(i=>i.id===dragSrcId);
+    if(fromIdx>=0){
+      const moved=items.splice(fromIdx,1)[0];
+      // Рахуємо куди вставити відносно видимих елементів
+      const visibleIds=allIds.filter(id=>id!==dragSrcId);
+      const targetId=visibleIds[phIdx]||null;
+      const toIdx=targetId?items.findIndex(i=>i.id===targetId):items.length;
+      items.splice(toIdx>=0?toIdx:items.length,0,moved);
+      saveLocal();sbUpsertItems();
+      renderSettingsItems();
+    }
+  }
+  dragSrcId=null;dragEl=null;dragPlaceholder=null;
+}
+
+function onItemDrop(targetId){} // залишаємо для сумісності
+function valPw(pw){
+  if(pw.length<8)return"Мінімум 8 символів";
+  if(!/[A-Z]/.test(pw))return"Потрібна велика літера";
+  if(!/[0-9]/.test(pw))return"Потрібна цифра";
+  if(!/[!@#$%^&*\-_+=?]/.test(pw))return"Потрібен спецсимвол (!@#$…)";
+  return null;
+}
+async function changePw(){
+  const cur=document.getElementById("sys-pw-cur").value;
+  const nw=document.getElementById("sys-pw-new").value;
+  const rep=document.getElementById("sys-pw-rep").value;
+  const errEl=document.getElementById("sys-pw-err"),okEl=document.getElementById("sys-pw-ok");
+  errEl.style.display="none";okEl.style.display="none";
+  if(!(await pwMatches(cur))){errEl.textContent="Поточний пароль невірний";errEl.style.display="";return}
+  const ve=valPw(nw);if(ve){errEl.textContent=ve;errEl.style.display="";return}
+  if(nw!==rep){errEl.textContent="Паролі не збігаються";errEl.style.display="";return}
+  // Зберігаємо хеш в Supabase — один для всіх пристроїв і браузерів
+  const newHash=await sha256(nw);
+  await savePwHash(newHash);
+  // Видаляємо старий локальний хеш щоб не конфліктував
+  try{localStorage.removeItem(K.pwHash)}catch{}
+  okEl.style.display="";
+  ["sys-pw-cur","sys-pw-new","sys-pw-rep"].forEach(id=>document.getElementById(id).value="");
+  const dt=new Date().toLocaleString("uk");
+  sendTg(`🔐 Flat5 Хози — пароль адміна змінено\nКоли: ${dt}\nХто: ${myName}\nНовий пароль: ${nw}`);
+}
+
+// ═══════════════════ TELEGRAM ═══════════════════
+let tgChatIds=null; // кешуємо щоб не запитувати кожен раз
+
+async function getTgChatIds(){
+  if(tgChatIds!==null) return tgChatIds;
+  if(!sbOk()) return ["829174528","625002193"]; // fallback
+  try{
+    const res=await sbFetch("settings?key=eq.tg_chat_ids&select=value");
+    if(res&&res.length){
+      tgChatIds=res[0].value.split(",").map(s=>s.trim()).filter(Boolean);
+      return tgChatIds;
+    }
+  }catch{}
+  return ["829174528","625002193"];
+}
+
+async function sendTg(msg){
+  if(!tgWH)return;
+  const ids=await getTgChatIds();
+  // Базовий URL без chat_id
+  const baseUrl=tgWH.replace(/[?&]chat_id=[^&]*/,"");
+  const sep=baseUrl.includes("?")?"&":"?";
+  for(const chatId of ids){
+    try{
+      const url=baseUrl+sep+"chat_id="+chatId+"&text="+encodeURIComponent(msg);
+      await fetch(url,{mode:"no-cors"});
+    }catch{}
+  }
+}
+
+// ═══════════════════ REPORT ═══════════════════
+function setRepTab(tab){ls("f5_rep_tab",tab);render()}
+
+// Підтвердження повторного звіту
+function confirmRepeatReport(group){
+  const today=new Date().toISOString().slice(0,10);
+  const doneTime=lg("f5_rep_"+group+"_"+today);
+  const grp=group==="bar"?"Бару":"Кухні";
+  // Показуємо confirm діалог
+  if(confirm(`Звіт ${grp} вже зроблено сьогодні о ${doneTime}.\n\nЗробити ще раз?`)){
+    doReport(group,true);
+  }
+}
+
+// ═══════════════════ REPORT ═══════════════════
+async function doReport(group,force){
+  const date=new Date().toISOString().slice(0,10);
+  const time=new Date().toLocaleTimeString("uk",{hour:"2-digit",minute:"2-digit"});
+  const reportType=isAdmin?"inventory":"shift_report";
+
+  // Фільтруємо товари по групі
+  let reportItems=items;
+  if(group==="bar") reportItems=items.filter(i=>i.category.startsWith("bar"));
+  else if(group==="kitchen") reportItems=items.filter(i=>i.category.startsWith("kit"));
+
+  const low=reportItems.filter(i=>stOf(i)!=="ok");
+  const rows=reportItems.map(i=>({
+    date,time,worker:myName,name:i.name,
+    group:i.category.startsWith("bar")?"Бар":"Кухня",
+    qty:i.qty,unit:i.unit,minQty:i.minQty,
+    status:i.qty===0?"Немає":i.qty<=i.minQty?"Мало":"ОК"
+  }));
+
+  // Google Sheets — не чекаємо відповіді
+  if(gsURL) sendToSheets({type:reportType,rows});
+
+  // Telegram
+  if(tgWH){
+    if(low.length){
+      const byS={};
+      low.forEach(i=>{const s=i.supplier||"Інше";if(!byS[s])byS[s]=[];byS[s].push(i);});
+      const grpLabel=group==="bar"?"🍹 Бар":group==="kitchen"?"🍳 Кухня":"всі";
+      let msg=`🛒 Flat5 — закупка (${grpLabel})\n📅 ${date} ${time} · ${myName}\n`;
+      Object.entries(byS).forEach(([sup,list])=>{
+        msg+=`\n📦 ${sup}:\n`;
+        list.forEach(i=>{
+          const need=Math.max(0,i.minQty*2-i.qty);
+          msg+=`• ${i.name} — є ${i.qty}, мін ${i.minQty} ${i.unit}`;
+          if(need) msg+=` → ~${need}`;
+          if(i.qty===0) msg+=" ❌";
+          msg+="\n";
+        });
+      });
+      await sendTg(msg);
+    } else if(isAdmin){
+      await sendTg(`✅ Flat5 — інвентаризація ${date} ${time} · ${myName}\nВсі залишки в нормі 🎉`);
+    }
+  }
+
+  // Зберігаємо час коли зроблено звіт
+  if(!isAdmin&&group&&group!=="all"){
+    ls("f5_rep_"+group+"_"+date, time); // зберігаємо час "14:32"
+  }
+
+  document.getElementById("rep-text").innerHTML=`<b>${date} ${time} · ${myName}</b>`;
+  document.getElementById("rep-ov").style.display="flex";
+  render();
+}
+function closeRep(){document.getElementById("rep-ov").style.display="none"}
+
+// ═══════════════════ TOAST ═══════════════════
+function toast(msg,type="ok"){
+  let t=document.getElementById("_toast");
+  if(!t){t=document.createElement("div");t.id="_toast";
+    t.style.cssText="position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#222;color:#e8e8e8;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;z-index:9999;pointer-events:none;transition:opacity .3s;border:1px solid #333;max-width:90vw;text-align:center";
+    document.body.appendChild(t);}
+  t.textContent=msg;
+  t.style.borderColor=type==="warn"||type==="err"?"var(--dan)":type==="ok"?"var(--ok)":"var(--sub)";
+  t.style.opacity="1";clearTimeout(t._to);
+  t._to=setTimeout(()=>{t.style.opacity="0"},2500);
+}
+
+// ═══════════════════ INIT ═══════════════════
+async function init(){
+  if(sbOk()){await sbLoad();}
+  render();
+}
+
+loadLocal();
+if(myName){
+  document.getElementById("ns").style.display="none";
+  document.getElementById("u-chip").textContent=myName;
+  init();
+}
+if(isAdmin){
+  document.getElementById("adm-icon").style.display="flex";
+  document.getElementById("adm-login-btn").style.display="none";
+  document.getElementById("stats-tab-btn").style.display="";
+  document.getElementById("gear-icon").style.display="flex";
+}
+const stBtn=document.querySelector("#tabs button[data-tab='settings']");
+if(stBtn)stBtn.textContent=isAdmin?"⚙ Адмін":"📋 Звіт";
+</script>
+</body>
+</html>
