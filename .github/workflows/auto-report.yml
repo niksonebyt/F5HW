@@ -1,0 +1,17 @@
+name: Auto Report 23:00
+
+on:
+  schedule:
+    - cron: '0 21 * * *'
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Edge Function
+        run: |
+          curl -X POST \
+            'https://xssbgknodvkimkmwrcrg.supabase.co/functions/v1/quick-task' \
+            -H 'Authorization: Bearer ${{ secrets.SERVICE_ROLE_KEY }}' \
+            -H 'Content-Type: application/json' \
+            -d '{}'
